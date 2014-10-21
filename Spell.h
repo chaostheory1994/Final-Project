@@ -14,11 +14,15 @@ public:
     Spell();
     Spell(const Spell& orig);
     virtual ~Spell();
-    int cast();
-    void draw();
-    std::string get_name();
+    virtual int cast();
+    virtual void update();
+    virtual void travel();
+    virtual void complete();
+    virtual void draw(float);
+    std::string* get_name();
+    void set_name(std::string*);
 private:
-
+    std::string* name;
 };
 
 #endif	/* SPELL_H */

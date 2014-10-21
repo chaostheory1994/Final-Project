@@ -13,9 +13,16 @@ public:
     Entity();
     Entity(const Entity& orig);
     virtual ~Entity();
-    void draw(float);
+    virtual void draw(float);
+    float getX();
+    float getZ();
 private:
-
+    float health;
+    float resource;
+    float x;
+    float z;
+    int cellX;
+    int cellZ;
 };
 
 #endif	/* ENTITY_H */

@@ -16,17 +16,9 @@ class Player : Entity{
 public:
     Player(float, float);
     Player(const Player& orig);
-    float getX();
-    float getZ();
     void move(int x, int z);
     virtual ~Player();
 private:
-    float x;
-    float z;
-    float heath;
-    float mana;
-    int cellX;
-    int cellZ;
 };
 
 #endif	/* PLAYER_H */
