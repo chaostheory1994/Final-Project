@@ -16,13 +16,12 @@ public:
     virtual void draw(float);
     float getX();
     float getZ();
-private:
+protected:
     float health;
     float resource;
     float x;
     float z;
-    int cellX;
-    int cellZ;
+    float direction;
 };
 
 #endif	/* ENTITY_H */

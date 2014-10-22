@@ -14,14 +14,16 @@ public:
     Spell();
     Spell(const Spell& orig);
     virtual ~Spell();
-    virtual int cast();
+    /*virtual int cast();
     virtual void update();
     virtual void travel();
     virtual void complete();
-    virtual void draw(float);
+    virtual void draw(float);*/
     std::string* get_name();
     void set_name(std::string*);
-private:
+    int get_id();
+protected:
+    int id;
     std::string* name;
 };
 

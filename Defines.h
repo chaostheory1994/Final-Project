@@ -9,6 +9,7 @@
 #define	DEFINES_H
 
 #define DEBUG_MESSAGES
+#define CELL_SIZE 100
 
 
 #endif	/* DEFINES_H */

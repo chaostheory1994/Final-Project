@@ -114,6 +114,7 @@ void gl_setup(void) {
 void my_setup(int argc, char **argv) {
     next_game_tick = GetTickCount();
     next_fps_update = GetTickCount();
+    m.set_player(&p);
 #ifdef DEBUG_MESSAGES
     // Section for Debug Messages.
 #endif
@@ -167,10 +168,10 @@ void my_display(void) {
     
     gluLookAt(p.getX(), 50, p.getZ(),
             p.getX(), 0, p.getZ(),
-            0, 0, 1);
+            0, 0, -1);
     
     m.draw();
-    p.draw();
+    //p.draw(0.0);
 
     /* buffer is ready */
     glutSwapBuffers();

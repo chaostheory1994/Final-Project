@@ -15,4 +15,7 @@ Entity::Entity(const Entity& orig) {
 
 Entity::~Entity() {
 }
+float Entity::getX(){ return x;}
+float Entity::getZ(){ return z;}
+void Entity::draw(float f){ return; };
 

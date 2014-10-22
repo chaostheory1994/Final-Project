@@ -8,8 +8,6 @@
 #ifndef MAP_H
 #define	MAP_H
 
-#define CELL_SIZE 100
-
 #include "Entity.h"
 #include "Cell.h"
 #include <cstdlib>
@@ -20,12 +18,13 @@ public:
     Map(const Map& orig);
     virtual ~Map();
     void draw();
-    void set_player(Entity* p);
+    void set_player(Entity*);
+    void add_entity(Entity*);
     void update();
 private:
     int sizeX;
     int sizeZ;
-    Cell** cells; 
+    Cell*** cells; 
     Entity* player;
 };
 
