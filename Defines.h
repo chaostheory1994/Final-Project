@@ -9,7 +9,8 @@
 #define	DEFINES_H
 
 #define DEBUG_MESSAGES
-#define CELL_SIZE 100
+#define CELL_SIZE 100 /* meters / pixels. May Still need adjustment.*/
+#define PLAYER_DEFAULT_SPEED 3 /* m/s */
 
 
 #endif	/* DEFINES_H */

@@ -16,7 +16,8 @@ class Player : public Entity{
 public:
     Player(float, float);
     Player(const Player& orig);
-    void move(int x, int z);
+    void move(int, int);
+    void update();
     void draw(float);
     virtual ~Player();
 private:

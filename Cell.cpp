@@ -78,3 +78,9 @@ void Cell::add_entity(Entity* e){
     }
 }
 
+/* Will go ahead and update all the entities in the cell.*/
+void Cell::update(){
+    Entity_List* curr = first;
+    while(curr != NULL) curr->e->update();
+}
+

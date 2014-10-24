@@ -154,6 +154,9 @@ void my_mouse_drag(int x, int y) {
  that is, (0,0) is at the upper left corner
  */
 void my_mouse(int button, int state, int mousex, int mousey) {
+    if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+        p.move(mousex - (width / 2), mousey - (height / 2));
+    }
 }
 
 void my_display(void) {
@@ -183,7 +186,7 @@ void my_idle(void) {
     loops = 0;
     while(GetTickCount() > next_game_tick && loops < MAX_FRAME_SKIP){
         // Update Game Stuff
-        
+        m.update();
         
         // Update Timing Stuff
         next_game_tick += SKIP_TICKS;

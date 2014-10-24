@@ -52,7 +52,8 @@ void Map::draw(){
 /* Will call update on all the cells.
  * This will also update all the cell's Entities / Spells */
 void Map::update(){
-    
+    int i, j;
+    for(i = 0; i < sizeZ; i++) for(j = 0; j < sizeX; j++) cells[i][j]->update();
 }
 
 /* The Player is special and the map will use the reference to the player to

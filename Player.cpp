@@ -8,11 +8,14 @@
 #include "Player.h"
 #include <GL/glut.h>
 #include "Spell.h"
+#include "Cell.h"
+#include "Defines.h"
+#include <cmath>
 
 Player::Player(float beginX, float beginZ) {
     x = beginX;
     z = beginZ;
-}
+} 
 
 Player::Player(const Player& orig) {
 }
@@ -21,6 +24,8 @@ Player::~Player() {
     
 }
 
+/* The method that will draw the player when called.
+ * The method assumes the player has been translated where he needs to be. */
 void Player::draw(float f){
     glColor3f(0, 1, 0);
     glBegin(GL_POLYGON);
@@ -28,4 +33,36 @@ void Player::draw(float f){
     glVertex3f(-0.5, 0, -0.5);
     glVertex3f(0.5, 0, -0.5);
     glEnd();
+}
+
+/* A method to update the player per SKIP_TICKS */
+void Player::update(){
+    // Do player movement.
+    if(distX < abs(dx)){
+        x -= distX;
+        distX = 0;
+    }
+    else{
+        distX -= dx;
+        x -= dx;
+    }
+    if(distZ < abs(dz)){
+        z -= distZ;
+        distZ = 0;
+    }
+    else{
+        distZ -= dz;
+        z -= dz;
+    }
+}
+
+/* This will setup the movement for update to use.
+   We have a speed setup in #Defines 
+   We need to calculate a dx and dz from the current position.*/
+void Player::move(int px, int pz){
+    direction = atan((float)(pz - z) / (float)(px - x));
+    dx = cos(direction) * PLAYER_DEFAULT_SPEED;
+    dz = sin(direction) * PLAYER_DEFAULT_SPEED;
+    distX = px - x;
+    distZ = pz - z;
 }

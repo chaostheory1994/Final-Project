@@ -14,6 +14,8 @@ public:
     Entity(const Entity& orig);
     virtual ~Entity();
     virtual void draw(float);
+    virtual void update();
+    virtual void move(int, int);
     float getX();
     float getZ();
 protected:
@@ -22,6 +24,8 @@ protected:
     float x;
     float z;
     float direction;
+    float distX, distZ;
+    float dx, dz;
 };
 
 #endif	/* ENTITY_H */
