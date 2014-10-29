@@ -10,8 +10,15 @@
 #include <cstdlib>
 #include <GL/glut.h>
 
-Cell::Cell(int s) {
+/* This is the constructor for the cells.
+ * 3 ints must be provided.
+ * s: The size of the cell.
+ * wx, wz: The World Coordinate of the cell.*/
+Cell::Cell(int s, int wx, int wz) {
     size = s;
+    wbx = wx * s;
+    wbz = wz * s;
+    
     first = NULL;
 }
 
@@ -52,6 +59,10 @@ void Cell::draw(float i, int x, int z){
     glVertex3f(size, 0, 0);
     glEnd();
     
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(size/16, 0, 0);
+    glVertex3f(size/16, 0, size/16);
+    glEnd();
 #endif
     while(curr != NULL){
         glPushMatrix();
@@ -81,6 +92,11 @@ void Cell::add_entity(Entity* e){
 /* Will go ahead and update all the entities in the cell.*/
 void Cell::update(){
     Entity_List* curr = first;
-    while(curr != NULL) curr->e->update();
+    while(curr != NULL) {
+        curr->e->update();
+        // We need to check if we need to move an entity to a neighbor cell.
+        //if()
+        curr = curr->next;
+    }
 }
 

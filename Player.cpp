@@ -11,8 +11,13 @@
 #include "Cell.h"
 #include "Defines.h"
 #include <cmath>
+#include <cstdio>
 
+/* Constructor for the player
+ * Will take the x,z coordinate in the world
+ */
 Player::Player(float beginX, float beginZ) {
+    // First we set which cell the player will be in.
     x = beginX;
     z = beginZ;
 } 
@@ -39,20 +44,20 @@ void Player::draw(float f){
 void Player::update(){
     // Do player movement.
     if(distX < abs(dx)){
-        x -= distX;
+        x += distX;
         distX = 0;
     }
     else{
         distX -= dx;
-        x -= dx;
+        x += dx;
     }
     if(distZ < abs(dz)){
-        z -= distZ;
+        z += distZ;
         distZ = 0;
     }
     else{
         distZ -= dz;
-        z -= dz;
+        z += dz;
     }
 }
 
@@ -63,6 +68,12 @@ void Player::move(int px, int pz){
     direction = atan((float)(pz - z) / (float)(px - x));
     dx = cos(direction) * PLAYER_DEFAULT_SPEED;
     dz = sin(direction) * PLAYER_DEFAULT_SPEED;
-    distX = px - x;
-    distZ = pz - z;
+#ifdef DEBUG_MESSAGES
+    printf("Player Speed: %f, %f\n", dx, dz);
+#endif
+    distX = px;
+    distZ = pz;
+#ifdef DEBUG_MESSAGES
+    printf("Player Moving: %f, %f\n", distX, distZ);
+#endif
 }

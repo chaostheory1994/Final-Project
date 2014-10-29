@@ -26,6 +26,7 @@ protected:
     float direction;
     float distX, distZ;
     float dx, dz;
+    int cellx, cellz;
 };
 
 #endif	/* ENTITY_H */

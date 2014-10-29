@@ -13,6 +13,10 @@
 #include "Map.h"
 #include "Defines.h"
 
+#ifdef __WIN32
+#include <windows.h>
+#endif
+
 #define TRUE  1
 #define FALSE 0
 
@@ -78,9 +82,9 @@ void glut_setup(void) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
     /* make a 400x300 window with the title of "GLUT Skeleton" placed at the top left corner */
-    glutInitWindowSize(400, 300);
-    width = 400;
-    height = 300;
+    glutInitWindowSize(800, 600);
+    width = 800;
+    height = 600;
     glutInitWindowPosition(0, 0);
     glutCreateWindow("GLUT Demo 1");
 
@@ -122,10 +126,26 @@ void my_setup(int argc, char **argv) {
 }
 
 void my_reshape(int w, int h) {
+    // We need to setup a ray calculator for mouse clicks.
+    double  model[16];
+    double proj[16];
+    int view[4];
+    double objX, objY, objZ;
+    
+    glGetDoublev(GL_MODELVIEW_MATRIX, model);
+    glGetDoublev(GL_PROJECTION_MATRIX, proj);
+    glGetIntegerv(GL_VIEWPORT, view);
+    
+    gluUnProject(273, 0, 50, model, proj, view, &objX, &objY, &objZ);
     /* define viewport -- x, y, (origin is at lower left corner) width, height */
     glViewport(0, 0, w, h);
     width = w;
     height = h;
+    
+#ifdef DEBUG_MESSAGES
+    printf("%f, %f, %f\n", objX, objY, objZ);
+#endif
+    
 }
 
 /* Sample keyboard callback function.
@@ -139,6 +159,11 @@ void my_keyboard(unsigned char key, int x, int y) {
         case 'Q':
             exit(0);
             break;
+#ifdef DEBUG_MESSAGES
+        case '1':
+            printf("Player Coord: %f, %f\n", p.getX(), p.getZ());
+            break;
+#endif
         default: break;
     }
     return;
@@ -155,9 +180,14 @@ void my_mouse_drag(int x, int y) {
  */
 void my_mouse(int button, int state, int mousex, int mousey) {
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+        // We have to remember that the mouse coordinate does not directly relate to map dist.
+        // Since we know the distance from the ground CAMERA_HEIGHT
+        // Basic Proportions can give us the actual movement of the player.
+        // mouseX/1 = worldX/CAMERA_HEIGHT
         p.move(mousex - (width / 2), mousey - (height / 2));
     }
 }
+
 
 void my_display(void) {
     /* clear the buffer */
@@ -169,7 +199,7 @@ void my_display(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
-    gluLookAt(p.getX(), 50, p.getZ(),
+    gluLookAt(p.getX(), CAMERA_HEIGHT, p.getZ(),
             p.getX(), 0, p.getZ(),
             0, 0, -1);
     

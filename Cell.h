@@ -17,7 +17,7 @@ struct Entity_List {
 
 class Cell {
 public:
-    Cell(int);
+    Cell(int, int, int);
     Cell(const Cell& orig);
     virtual ~Cell();
     void add_entity(Entity*);
@@ -29,6 +29,7 @@ public:
 private:
     int size;
     Entity_List* first;
+    int wbx, wbz;
 };
 
 #endif	/* CELL_H */
