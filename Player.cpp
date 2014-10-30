@@ -43,7 +43,7 @@ void Player::draw(float f){
 /* A method to update the player per SKIP_TICKS */
 void Player::update(){
     // Do player movement.
-    if(distX < abs(dx)){
+    if(distX <= abs(dx)){
         x += distX;
         distX = 0;
     }
@@ -51,7 +51,7 @@ void Player::update(){
         distX -= dx;
         x += dx;
     }
-    if(distZ < abs(dz)){
+    if(distZ <= abs(dz)){
         z += distZ;
         distZ = 0;
     }
@@ -64,7 +64,7 @@ void Player::update(){
 /* This will setup the movement for update to use.
    We have a speed setup in #Defines 
    We need to calculate a dx and dz from the current position.*/
-void Player::move(int px, int pz){
+void Player::move(float px, float pz){
     direction = atan((float)(pz - z) / (float)(px - x));
     dx = cos(direction) * PLAYER_DEFAULT_SPEED;
     dz = sin(direction) * PLAYER_DEFAULT_SPEED;

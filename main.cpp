@@ -41,6 +41,7 @@ void my_idle(void);
 #ifdef __linux__
 unsigned GetTickCount();
 #endif
+bool gluInvertMatrix(const float*, float*);
 
 // Variables.
 const int SKIP_TICKS = 1000 / GAME_UPDATE_SPEED;
@@ -51,8 +52,8 @@ int loops;
 int width;
 int height;
 // Game Variables
-Player p(0, 0);
-Map m(100, 100);
+Player* p;
+Map* m;
 
 void myabort(void) {
     abort();
@@ -118,7 +119,9 @@ void gl_setup(void) {
 void my_setup(int argc, char **argv) {
     next_game_tick = GetTickCount();
     next_fps_update = GetTickCount();
-    m.set_player(&p);
+    p = new Player(0, 0);
+    m = new Map(100, 100);
+    m->set_player(p);
 #ifdef DEBUG_MESSAGES
     // Section for Debug Messages.
 #endif
@@ -126,25 +129,10 @@ void my_setup(int argc, char **argv) {
 }
 
 void my_reshape(int w, int h) {
-    // We need to setup a ray calculator for mouse clicks.
-    double  model[16];
-    double proj[16];
-    int view[4];
-    double objX, objY, objZ;
-    
-    glGetDoublev(GL_MODELVIEW_MATRIX, model);
-    glGetDoublev(GL_PROJECTION_MATRIX, proj);
-    glGetIntegerv(GL_VIEWPORT, view);
-    
-    gluUnProject(273, 0, 50, model, proj, view, &objX, &objY, &objZ);
     /* define viewport -- x, y, (origin is at lower left corner) width, height */
     glViewport(0, 0, w, h);
     width = w;
     height = h;
-    
-#ifdef DEBUG_MESSAGES
-    printf("%f, %f, %f\n", objX, objY, objZ);
-#endif
     
 }
 
@@ -161,7 +149,13 @@ void my_keyboard(unsigned char key, int x, int y) {
             break;
 #ifdef DEBUG_MESSAGES
         case '1':
-            printf("Player Coord: %f, %f\n", p.getX(), p.getZ());
+            printf("Player Coord: %f, %f\n", p->getX(), p->getZ());
+            break;
+        case '2':
+            p->move(1, 1);
+            break;
+        case '3':
+            p->move(-1, -1);
             break;
 #endif
         default: break;
@@ -180,11 +174,81 @@ void my_mouse_drag(int x, int y) {
  */
 void my_mouse(int button, int state, int mousex, int mousey) {
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
+        /* The Following Section is from
+         * www.antongerdelan.net/opengl/raycasting.html
+         */
+        float model[16];
+        float proj[16];
+        float temp[16];
+        float norm;
         // We have to remember that the mouse coordinate does not directly relate to map dist.
-        // Since we know the distance from the ground CAMERA_HEIGHT
-        // Basic Proportions can give us the actual movement of the player.
-        // mouseX/1 = worldX/CAMERA_HEIGHT
-        p.move(mousex - (width / 2), mousey - (height / 2));
+        // We have to reverse the graphics pipeline to convert
+        // mouse coordinates into world coordinates.
+        // We start by normalizing the coordinates.
+        // mousex/width would give 0-1 range
+        // but we want -1 to 1 range so we multiply by 2
+        // to get the range of 2 and then subtrace by one
+        // to get the range we want,
+        float tempx, tempy, tempz, tempp;
+        float x = (2.0f * mousex) / width - 1.0f;
+        // the y coordinate is a little different because
+        // the origin of the y is from the top left.
+        float y = 1.0f - (2.0f * mousey) / height;
+        // We dont really have a z axis as of yet
+        float z = -1.0f;
+        // Next step is to convert the normalized point into
+        // Homogeneous clip coordinates.
+        float h = 1.0f;
+#ifdef DEBUG_MESSAGES
+        printf("Original X,Y,Z,P\n%f, %f, %f, %f\n", x, y, z, h);
+#endif
+        // Now we have a matrix of [x, y, -1, 1]T
+        // Next we convert to camera eye coordinates.
+        // First we nead the project matrix.
+        glGetFloatv(GL_PROJECTION_MATRIX, temp);
+        // We need to do the inverse to get the back to the Camera Coordinates.
+        gluInvertMatrix(temp, proj);
+        // Now we simply multiply our homogeneous coordinates by the inverse.
+        tempx = proj[0] * x + proj[4] * y +
+                proj[8] * z + proj[12] * h;
+        tempy = proj[1] * x + proj[5] * y +
+                proj[9] * z + proj[13] * h;
+        tempz = proj[2] * x + proj[6] * y +
+                proj[10] * z + proj[14] * h;
+        tempp = proj[3] * x + proj[7] * y +
+                proj[11] * z + proj[15] * h;
+#ifdef DEBUG_MESSAGES
+        printf("Post Inverse Projection\n%f, %f, %f, %f\n", tempx, tempy, tempz, tempp);
+#endif
+        // Reverse to the world coordinates.
+        glGetFloatv(GL_MODELVIEW_MATRIX, temp);
+        // Inverse
+        gluInvertMatrix(temp, model);
+        // Multiply the inverse and the new matrix.
+        x = model[0] * tempx + model[4] * tempy +
+                model[8] * tempz + model[12] * tempp;
+        y = model[1] * tempx + model[5] * tempy +
+                model[9] * tempz + model[13] * tempp;
+        z = model[2] * tempx + model[6] * tempy +
+                model[10] * tempz + model[14] * tempp;
+        h = model[3] * tempx + model[7] * tempy +
+                model[11] * tempz + model[15] * tempp;
+#ifdef DEBUG_MESSAGES
+        printf("Post ModelView\n%f, %f, %f\n", x, y, z);
+#endif
+        // Now we need to normalize the matix.
+        // We dont actually need to normalize since our
+        // Map is on the 0 y axis.
+        norm = sqrt(x*x+y*y+z*z);
+        x /= norm;
+        y /= norm;
+        z /= norm;
+#ifdef DEBUG_MESSAGES
+        printf("%f, %f, %f\n", x, y, z);
+#endif
+        /* End Of Section*/
+        
+        //p->move(1.0f, 1.0f);
     }
 }
 
@@ -199,11 +263,11 @@ void my_display(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
-    gluLookAt(p.getX(), CAMERA_HEIGHT, p.getZ(),
-            p.getX(), 0, p.getZ(),
+    gluLookAt(p->getX(), CAMERA_HEIGHT, p->getZ(),
+            p->getX(), 0, p->getZ(),
             0, 0, -1);
     
-    m.draw();
+    m->draw();
     //p.draw(0.0);
 
     /* buffer is ready */
@@ -216,7 +280,7 @@ void my_idle(void) {
     loops = 0;
     while(GetTickCount() > next_game_tick && loops < MAX_FRAME_SKIP){
         // Update Game Stuff
-        m.update();
+        m->update();
         
         // Update Timing Stuff
         next_game_tick += SKIP_TICKS;
@@ -229,7 +293,6 @@ void my_idle(void) {
 }
 
 #ifdef __linux__
-
 unsigned GetTickCount() {
     timespec ts;
     if (clock_gettime(CLOCK_REALTIME, &ts)) {
@@ -238,3 +301,136 @@ unsigned GetTickCount() {
     return ((long long) ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
 }
 #endif
+
+/* Method Copied From
+ * http://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
+ * Simply inverts a 4x4 matrix. */
+bool gluInvertMatrix(const float m[16], float invOut[16])
+{
+    double inv[16], det;
+    int i;
+
+    inv[0] = m[5]  * m[10] * m[15] - 
+             m[5]  * m[11] * m[14] - 
+             m[9]  * m[6]  * m[15] + 
+             m[9]  * m[7]  * m[14] +
+             m[13] * m[6]  * m[11] - 
+             m[13] * m[7]  * m[10];
+
+    inv[4] = -m[4]  * m[10] * m[15] + 
+              m[4]  * m[11] * m[14] + 
+              m[8]  * m[6]  * m[15] - 
+              m[8]  * m[7]  * m[14] - 
+              m[12] * m[6]  * m[11] + 
+              m[12] * m[7]  * m[10];
+
+    inv[8] = m[4]  * m[9] * m[15] - 
+             m[4]  * m[11] * m[13] - 
+             m[8]  * m[5] * m[15] + 
+             m[8]  * m[7] * m[13] + 
+             m[12] * m[5] * m[11] - 
+             m[12] * m[7] * m[9];
+
+    inv[12] = -m[4]  * m[9] * m[14] + 
+               m[4]  * m[10] * m[13] +
+               m[8]  * m[5] * m[14] - 
+               m[8]  * m[6] * m[13] - 
+               m[12] * m[5] * m[10] + 
+               m[12] * m[6] * m[9];
+
+    inv[1] = -m[1]  * m[10] * m[15] + 
+              m[1]  * m[11] * m[14] + 
+              m[9]  * m[2] * m[15] - 
+              m[9]  * m[3] * m[14] - 
+              m[13] * m[2] * m[11] + 
+              m[13] * m[3] * m[10];
+
+    inv[5] = m[0]  * m[10] * m[15] - 
+             m[0]  * m[11] * m[14] - 
+             m[8]  * m[2] * m[15] + 
+             m[8]  * m[3] * m[14] + 
+             m[12] * m[2] * m[11] - 
+             m[12] * m[3] * m[10];
+
+    inv[9] = -m[0]  * m[9] * m[15] + 
+              m[0]  * m[11] * m[13] + 
+              m[8]  * m[1] * m[15] - 
+              m[8]  * m[3] * m[13] - 
+              m[12] * m[1] * m[11] + 
+              m[12] * m[3] * m[9];
+
+    inv[13] = m[0]  * m[9] * m[14] - 
+              m[0]  * m[10] * m[13] - 
+              m[8]  * m[1] * m[14] + 
+              m[8]  * m[2] * m[13] + 
+              m[12] * m[1] * m[10] - 
+              m[12] * m[2] * m[9];
+
+    inv[2] = m[1]  * m[6] * m[15] - 
+             m[1]  * m[7] * m[14] - 
+             m[5]  * m[2] * m[15] + 
+             m[5]  * m[3] * m[14] + 
+             m[13] * m[2] * m[7] - 
+             m[13] * m[3] * m[6];
+
+    inv[6] = -m[0]  * m[6] * m[15] + 
+              m[0]  * m[7] * m[14] + 
+              m[4]  * m[2] * m[15] - 
+              m[4]  * m[3] * m[14] - 
+              m[12] * m[2] * m[7] + 
+              m[12] * m[3] * m[6];
+
+    inv[10] = m[0]  * m[5] * m[15] - 
+              m[0]  * m[7] * m[13] - 
+              m[4]  * m[1] * m[15] + 
+              m[4]  * m[3] * m[13] + 
+              m[12] * m[1] * m[7] - 
+              m[12] * m[3] * m[5];
+
+    inv[14] = -m[0]  * m[5] * m[14] + 
+               m[0]  * m[6] * m[13] + 
+               m[4]  * m[1] * m[14] - 
+               m[4]  * m[2] * m[13] - 
+               m[12] * m[1] * m[6] + 
+               m[12] * m[2] * m[5];
+
+    inv[3] = -m[1] * m[6] * m[11] + 
+              m[1] * m[7] * m[10] + 
+              m[5] * m[2] * m[11] - 
+              m[5] * m[3] * m[10] - 
+              m[9] * m[2] * m[7] + 
+              m[9] * m[3] * m[6];
+
+    inv[7] = m[0] * m[6] * m[11] - 
+             m[0] * m[7] * m[10] - 
+             m[4] * m[2] * m[11] + 
+             m[4] * m[3] * m[10] + 
+             m[8] * m[2] * m[7] - 
+             m[8] * m[3] * m[6];
+
+    inv[11] = -m[0] * m[5] * m[11] + 
+               m[0] * m[7] * m[9] + 
+               m[4] * m[1] * m[11] - 
+               m[4] * m[3] * m[9] - 
+               m[8] * m[1] * m[7] + 
+               m[8] * m[3] * m[5];
+
+    inv[15] = m[0] * m[5] * m[10] - 
+              m[0] * m[6] * m[9] - 
+              m[4] * m[1] * m[10] + 
+              m[4] * m[2] * m[9] + 
+              m[8] * m[1] * m[6] - 
+              m[8] * m[2] * m[5];
+
+    det = m[0] * inv[0] + m[1] * inv[4] + m[2] * inv[8] + m[3] * inv[12];
+
+    if (det == 0)
+        return false;
+
+    det = 1.0 / det;
+
+    for (i = 0; i < 16; i++)
+        invOut[i] = inv[i] * det;
+
+    return true;
+}
