@@ -16,7 +16,7 @@ Entity::Entity(const Entity& orig) {
 Entity::~Entity() {
 }
 
-void Entity::move(int px, int pz){
+void Entity::move(float px, float pz){
     distX = px - x;
     distZ = pz = z;
 }

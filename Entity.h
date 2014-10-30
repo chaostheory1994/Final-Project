@@ -15,7 +15,7 @@ public:
     virtual ~Entity();
     virtual void draw(float);
     virtual void update();
-    virtual void move(int, int);
+    virtual void move(float, float);
     float getX();
     float getZ();
 protected:
