@@ -19,6 +19,7 @@ public:
     void move(float, float);
     void update();
     void draw(float);
+    void update_pos();
     virtual ~Player();
 private:
 };

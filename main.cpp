@@ -3,7 +3,8 @@
 #else
 #include <GL/glut.h>
 #endif
-#include <math.h>
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctime>
@@ -27,6 +28,10 @@
 #define DELTA_TIME 10  /* defined to be 10 msec */
 #define GAME_UPDATE_SPEED 25 /* in fps, how many times a second the game should update. */
 #define MAX_FRAME_SKIP 5 /* Max number of frames that the program can skip to update game mechanics */
+#define CAMERA_ANGLE 0 /* WARNING: right now anything but 0 will mess with mouse raycast */
+
+#define DEFAULT_WINDOW_SIZE_X 200.0
+#define DEFAULT_WINDOW_SIZE_Y 200.0
 
 void myabort(void);
 void glut_setup(void);
@@ -54,6 +59,11 @@ int height;
 // Game Variables
 Player* p;
 Map* m;
+// Camera Variables.
+int camera_offsetX;
+int camera_offsetZ;
+int cameraY;
+int camera_distance;
 
 void myabort(void) {
     abort();
@@ -117,11 +127,20 @@ void gl_setup(void) {
 }
 
 void my_setup(int argc, char **argv) {
+    float rad;
     next_game_tick = GetTickCount();
     next_fps_update = GetTickCount();
     p = new Player(0, 0);
     m = new Map(100, 100);
     m->set_player(p);
+    // We are going to setup the camera location.
+    // The default camera distance will be defined as a macro.
+    // We can adjust the degrees using the macro.
+    rad = (CAMERA_ANGLE * M_PI) / 180;
+    camera_distance = 50;
+    cameraY = cos(rad) * camera_distance;
+    camera_offsetZ = sin(rad) * camera_distance;
+    camera_offsetX = 0;
 #ifdef DEBUG_MESSAGES
     // Section for Debug Messages.
 #endif
@@ -176,7 +195,7 @@ void my_mouse(int button, int state, int mousex, int mousey) {
     if(button == GLUT_LEFT_BUTTON && state == GLUT_DOWN){
         /* The Following Section is from
          * www.antongerdelan.net/opengl/raycasting.html
-         */
+         *
         float model[16];
         float proj[16];
         float temp[16];
@@ -246,9 +265,39 @@ void my_mouse(int button, int state, int mousex, int mousey) {
 #ifdef DEBUG_MESSAGES
         printf("%f, %f, %f\n", x, y, z);
 #endif
-        /* End Of Section*/
+        * End Of Section*/
         
-        //p->move(1.0f, 1.0f);
+        /* This version of ray casting
+         * uses a glu call gluUnProject*/
+        double model[16];
+        double proj[16];
+        int view[4];
+        double ray_origin[3];
+        double ray_point[3];
+        double ray[3];
+        int i;
+        
+        glGetDoublev(GL_MODELVIEW_MATRIX, model);
+        glGetDoublev(GL_PROJECTION_MATRIX, proj);
+        glGetIntegerv(GL_VIEWPORT, view);
+        
+        gluUnProject(mousex, view[3] - mousey, 0.0,
+                model, proj, view,
+                ray_origin, ray_origin+1, ray_origin+2);
+        
+        gluUnProject(mousex, view[3] - mousey, 1.0,
+                model, proj, view,
+                ray_point, ray_point+1, ray_point+2);
+        
+        for(i = 0; i < 3; i++)
+            ray[i] = ray_point[i] - ray_origin[i];
+        
+#ifdef DEBUG_MESSAGES
+        printf("%f, %f, %f\n", ray[0], ray[1], ray[2]);
+        //printf("%f, %f, %f\n", ray[0] * 50, ray[1] * 50, ray[2] * 50);
+#endif
+        
+        p->move(ray[0] * (49.0/99.0), ray[2] * (49.0/99.0));
     }
 }
 
@@ -263,9 +312,13 @@ void my_display(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
-    gluLookAt(p->getX(), CAMERA_HEIGHT, p->getZ(),
+    gluLookAt(p->getX() + camera_offsetX, cameraY, p->getZ() + camera_offsetZ,
             p->getX(), 0, p->getZ(),
             0, 0, -1);
+    
+    // To make the game look good on all resolutions, gonna scale everything to look nice.
+    // Does not quite work yet
+    //glScalef(DEFAULT_WINDOW_SIZE_X / width, 1, DEFAULT_WINDOW_SIZE_Y / height);
     
     m->draw();
     //p.draw(0.0);
@@ -280,6 +333,7 @@ void my_idle(void) {
     loops = 0;
     while(GetTickCount() > next_game_tick && loops < MAX_FRAME_SKIP){
         // Update Game Stuff
+        m->update_movement();
         m->update();
         
         // Update Timing Stuff

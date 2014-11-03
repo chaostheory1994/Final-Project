@@ -14,6 +14,10 @@
 #define CAMERA_HEIGHT 50
 #define JAVA_IS_BUTT
 
+/* Collision Macros */
+#define BOX_COL 0x1;
+#define SPHERE_COL 0x1;
+
 
 #endif	/* DEFINES_H */
 

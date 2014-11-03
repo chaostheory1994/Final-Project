@@ -89,11 +89,17 @@ void Cell::add_entity(Entity* e){
     }
 }
 
-/* Will go ahead and update all the entities in the cell.*/
+/* Will go ahead and update all the entities in the cell.
+ * Will also initialize the movement of spells. */
 void Cell::update(){
+    
+}
+
+/* Update all the entities movement*/
+void Cell::update_movement(){
     Entity_List* curr = first;
     while(curr != NULL) {
-        curr->e->update();
+        curr->e->update_pos();
         // We need to check if we need to move an entity to a neighbor cell.
         //if()
         curr = curr->next;

@@ -16,6 +16,7 @@ public:
     virtual void draw(float);
     virtual void update();
     virtual void move(float, float);
+    virtual void update_pos();
     float getX();
     float getZ();
 protected:

@@ -51,12 +51,20 @@ void Map::draw(){
 }
 
 /* Will call update on all the cells.
- * This will also update all the cell's Entities / Spells */
+ * This will also update all the cell's Entities / Spells
+ * though checking for collision and whatever other various effect
+ * The different objects may need.
+ * Should be called before map.update_movement();*/
 void Map::update(){
-    int i, j;
-    for(i = 0; i < sizeX; i++) for(j = 0; j < sizeZ; j++) cells[i][j]->update();
+    
 }
 
+/* Will call update on all the cells.
+ * Will simple have the cell move all the objects as best as it can.*/
+void Map::update_movement(){
+    int i, j;
+    for(i = 0; i < sizeX; i++) for(j = 0; j < sizeZ; j++) cells[i][j]->update_movement();
+}
 /* The Player is special and the map will use the reference to the player to
  * Decide certain things like what to draw. */
 void Map::set_player(Entity* p){

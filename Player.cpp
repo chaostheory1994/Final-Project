@@ -33,15 +33,21 @@ Player::~Player() {
  * The method assumes the player has been translated where he needs to be. */
 void Player::draw(float f){
     glColor3f(0, 1, 0);
+    glRotatef(-direction * (180/M_PI), 0, 1.0, 0); 
     glBegin(GL_POLYGON);
-    glVertex3f(0, 0, 0.5);
+    glVertex3f(0.5, 0, 0);
     glVertex3f(-0.5, 0, -0.5);
-    glVertex3f(0.5, 0, -0.5);
+    glVertex3f(-0.5, 0, 0.5);
     glEnd();
 }
 
 /* A method to update the player per SKIP_TICKS */
 void Player::update(){
+    
+}
+
+/* A method to update the player's position per SKIP_TICKS */
+void Player::update_pos(){
     // Do player movement.
     if(distX <= abs(dx)){
         x += distX;
@@ -65,7 +71,19 @@ void Player::update(){
    We have a speed setup in #Defines 
    We need to calculate a dx and dz from the current position.*/
 void Player::move(float px, float pz){
-    direction = atan((float)(pz - z) / (float)(px - x));
+    if(px == 0.0f && pz == 0.0f);
+    // Special Case px = 0;
+    if(px == 0.0f)
+        direction = (M_PI / 2.0f) * (pz / abs(pz));
+    else if(pz == 0.0f && px < 0.0f) direction = M_PI;
+    else if(pz == 0.0f) direction = 0.0;
+    else if(px < 0.0f && pz > 0.0f) direction = M_PI + atan(pz/px);
+    else if(px < 0.0f && pz < 0.0f) direction = -M_PI + atan(pz/px);
+    else direction = atan(pz / px);
+#ifdef DEBUG_MESSAGES
+    printf("Player Direction: %f\n", direction);
+#endif
+    
     dx = cos(direction) * PLAYER_DEFAULT_SPEED;
     dz = sin(direction) * PLAYER_DEFAULT_SPEED;
 #ifdef DEBUG_MESSAGES

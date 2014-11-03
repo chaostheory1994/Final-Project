@@ -21,6 +21,7 @@ public:
     void set_player(Entity*);
     void add_entity(Entity*);
     void update();
+    void update_movement();
 private:
     int sizeX;
     int sizeZ;

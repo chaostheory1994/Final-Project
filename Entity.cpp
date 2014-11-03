@@ -18,8 +18,9 @@ Entity::~Entity() {
 
 void Entity::move(float px, float pz){
     distX = px - x;
-    distZ = pz = z;
+    distZ = pz - z;
 }
+void Entity:: update_pos(){ return; }
 float Entity::getX(){ return x;}
 float Entity::getZ(){ return z;}
 void Entity::draw(float f){ return; };
