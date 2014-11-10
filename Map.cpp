@@ -140,5 +140,5 @@ int Map::add_spell(Spell* sp, Entity* caster, unsigned t){
     sd = new Spell_Details;
     
     //added because error was thrown that no int was returned
-    return 0;
+    //return 0;
 }
