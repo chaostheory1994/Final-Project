@@ -14,6 +14,7 @@
 #include "Entity.h"
 #include "Map.h"
 #include "Defines.h"
+#include "Ghost.h"
 
 #ifdef __WIN32
 #include <windows.h>
@@ -137,6 +138,8 @@ void my_setup(int argc, char **argv) {
     p = new Player(0, 0);
     m = new Map(100, 100);
     m->set_player(p);
+    
+    m->add_entity(new Ghost(1,1));
     // We are going to setup the camera location.
     // The default camera distance will be defined as a macro.
     // We can adjust the degrees using the macro.

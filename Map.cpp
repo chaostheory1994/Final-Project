@@ -125,6 +125,12 @@ void Map::set_player(Entity* p){
     cells[(int)(p->getX() / 100)][(int)(p->getZ() / 100)]->add_entity(player);
 }
 
+/* Add any entity to the map based off the entity's position variables
+ * May not be the final function for this purpose but I created it to add a ghost to the map for beta testing */
+void Map::add_entity(Entity* p){
+    cells[(int)(p->getX() / 100)][(int)(p->getZ() / 100)]->add_entity(p);
+}
+
 /* Simple interface for the main loop to have the map keep track of mouse coordinates. */
 void Map::update_mouse(int x, int y){
     mouseX = x;
@@ -140,5 +146,5 @@ int Map::add_spell(Spell* sp, Entity* caster, unsigned t){
     sd = new Spell_Details;
     
     //added because error was thrown that no int was returned
-    return 0;
+    //return 0;
 }
