@@ -8,7 +8,10 @@
 #include "Cell.h"
 #include "Defines.h"
 #include <cstdlib>
+#include <cstdio>
 #include <GL/glut.h>
+
+std::queue<Entity*> Cell::xfer_ent_que;
 
 /* This is the constructor for the cells.
  * 3 ints must be provided.
@@ -20,6 +23,7 @@ Cell::Cell(int s, int wx, int wz) {
     wbz = wz * s;
     
     first = NULL;
+    
 }
 
 Cell::Cell(const Cell& orig) {
@@ -92,17 +96,66 @@ void Cell::add_entity(Entity* e){
 /* Will go ahead and update all the entities in the cell.
  * Will also initialize the movement of spells. */
 void Cell::update(){
+    Entity_List* Ebegin;
+    // Lets do collision stuff!
+    // Generate a list of Entities on surrounding Cells.
+}
+
+/* Delete a node in the list and return the next node.*/
+Entity_List* Cell::delete_node(Entity_List* el){
+    Entity_List* prev = NULL;
+    Entity_List* curr = first;
+    /* Find where the node is located. */
+    while(curr != el && curr != NULL){
+        prev = curr;
+        curr = curr->next;
+    }
+    // Did we find the node?
+    if(curr == NULL) return NULL;
     
+    // Since we did.
+    // Was the node in the first spot?
+    if(prev == NULL){
+        prev = curr->next;
+        delete curr;
+        first = prev;
+        curr = prev;
+    }
+    else{
+        prev->next = curr->next;
+        delete curr;
+        curr = prev->next;
+    }
+    return curr;
 }
 
 /* Update all the entities movement*/
 void Cell::update_movement(){
     Entity_List* curr = first;
+    
     while(curr != NULL) {
         curr->e->update_pos();
         // We need to check if we need to move an entity to a neighbor cell.
-        //if()
-        curr = curr->next;
+        if(curr->e->getX() >= wbx + 100 ||
+                curr->e->getX() < wbx ||
+                curr->e->getZ() >= wbz + 100 ||
+                curr->e->getZ() < wbz) {
+            xfer_ent_que.push(curr->e);
+            curr = delete_node(curr);
+        }
+        else curr = curr->next;
     }
 }
 
+/* Wrapper Functions for the queue */
+bool Cell::que_empty(){
+    return xfer_ent_que.empty();
+}
+
+Entity* Cell::que_front(){
+    return xfer_ent_que.front();
+}
+
+void Cell::que_pop(){
+    xfer_ent_que.pop();
+}

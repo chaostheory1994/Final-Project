@@ -20,13 +20,18 @@ public:
     void draw();
     void set_player(Entity*);
     void add_entity(Entity*);
+    int add_spell(Spell*, Entity*, unsigned t);
     void update();
     void update_movement();
+    void recell_entity(Entity*);
+    void update_mouse(int x, int y);
 private:
     int sizeX;
     int sizeZ;
+    int mouseX, mouseY;
     Cell*** cells; 
     Entity* player;
+    
 };
 
 #endif	/* MAP_H */

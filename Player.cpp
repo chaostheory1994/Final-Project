@@ -29,6 +29,9 @@ Player::~Player() {
     
 }
 
+/* Using default map bound algorithm */
+//void Player::map_outbound(int id){ printf("Calling player map_bound\n"); }
+
 /* The method that will draw the player when called.
  * The method assumes the player has been translated where he needs to be. */
 void Player::draw(float f){
@@ -49,7 +52,7 @@ void Player::update(){
 /* A method to update the player's position per SKIP_TICKS */
 void Player::update_pos(){
     // Do player movement.
-    if(distX <= abs(dx)){
+    if(abs(distX) <= abs(dx)){
         x += distX;
         distX = 0;
     }
@@ -57,7 +60,7 @@ void Player::update_pos(){
         distX -= dx;
         x += dx;
     }
-    if(distZ <= abs(dz)){
+    if(abs(distZ) <= abs(dz)){
         z += distZ;
         distZ = 0;
     }
@@ -71,7 +74,7 @@ void Player::update_pos(){
    We have a speed setup in #Defines 
    We need to calculate a dx and dz from the current position.*/
 void Player::move(float px, float pz){
-    if(px == 0.0f && pz == 0.0f);
+    if(px == 0.0f && pz == 0.0f) return;
     // Special Case px = 0;
     if(px == 0.0f)
         direction = (M_PI / 2.0f) * (pz / abs(pz));

@@ -10,6 +10,7 @@
 
 #include "Entity.h"
 #include "Spell.h"
+//#include "Map.h"
 #include <queue>
 
 struct Entity_List {
@@ -19,12 +20,6 @@ struct Entity_List {
 struct Spell_List {
     Spell* s;
     Spell_List* next;
-};
-struct Queue_Packet {
-    int obj_type;
-    int offset_x;
-    int offset_y;
-    void* obj;
 };
 
 class Cell {
@@ -39,12 +34,21 @@ public:
     void update();
     void update_movement();
     int get_size();
+    static bool que_empty();
+    static Entity* que_front();
+    static void que_pop();
 private:
+    static std::queue<Entity*> xfer_ent_que;
+    Entity_List* delete_node(Entity_List*);
+    void check_col_ent(Entity*, Entity*);
+    void check_col_sp(Entity*, Spell*);
+    //void transfer_entity(Entity*);
     int size;
     Entity_List* first;
     int wbx, wbz;
-    std::queue<Queue_Packet*> q;
 };
+
+
 
 #endif	/* CELL_H */
 

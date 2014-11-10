@@ -20,6 +20,7 @@ public:
     void update();
     void draw(float);
     void update_pos();
+    //void map_outbound(int);
     virtual ~Player();
 private:
 };

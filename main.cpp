@@ -24,7 +24,6 @@
 #define max(a,b) ((a)>(b)?(a):(b))
 #define min(a,b) ((a)<(b)?(a):(b))
 #define my_assert(X,Y) ((X)?(void) 0:(printf("error:%s in %s at %d", Y, __FILE__, __LINE__), myabort()))
-
 #define DELTA_TIME 10  /* defined to be 10 msec */
 #define GAME_UPDATE_SPEED 25 /* in fps, how many times a second the game should update. */
 #define MAX_FRAME_SKIP 5 /* Max number of frames that the program can skip to update game mechanics */
@@ -41,6 +40,7 @@ void my_display(void);
 void my_reshape(int w, int h);
 void my_keyboard(unsigned char key, int x, int y);
 void my_mouse_drag(int x, int y);
+void my_mouse_passive(int x, int y);
 void my_mouse(int button, int state, int mousex, int mousey);
 void my_idle(void);
 #ifdef __linux__
@@ -104,6 +104,7 @@ void glut_setup(void) {
     glutReshapeFunc(my_reshape);
     glutMouseFunc(my_mouse);
     glutMotionFunc(my_mouse_drag);
+    glutPassiveMotionFunc(my_mouse_passive);
     glutKeyboardFunc(my_keyboard);
     glutIdleFunc(my_idle);
 
@@ -187,6 +188,11 @@ void my_mouse_drag(int x, int y) {
     return;
 }
 
+/* Continue to keep track of mouse position */
+void my_mouse_passive(int x, int y){
+    m->update_mouse(x, y);
+    return;
+}
 /* stubbed but doesn't do anything either
  (mousex, mousey) are in screen coordinates
  that is, (0,0) is at the upper left corner
@@ -346,7 +352,7 @@ void my_idle(void) {
     return;
 }
 
-#ifdef __linux__
+#ifndef __WIN32
 unsigned GetTickCount() {
     timespec ts;
     if (clock_gettime(CLOCK_REALTIME, &ts)) {
