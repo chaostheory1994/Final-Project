@@ -1,7 +1,7 @@
 /* 
  * File:   Player.cpp
  * Author: jacob
- * Kyle Is Awesome
+ * 
  * Created on October 20, 2014, 1:36 PM
  */
 
