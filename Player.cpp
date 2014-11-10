@@ -1,12 +1,17 @@
 /* 
  * File:   Player.cpp
  * Author: jacob
- * 
+ * Kyle Is Awesome
  * Created on October 20, 2014, 1:36 PM
  */
 
-#include "Player.h"
+#if defined(__APPLE__)
+#include <GLUT/glut.h>
+#include <stdlib.h>
+#else
 #include <GL/glut.h>
+#endif
+#include "Player.h"
 #include "Spell.h"
 #include "Cell.h"
 #include "Defines.h"

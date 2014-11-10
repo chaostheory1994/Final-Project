@@ -5,8 +5,12 @@
  * Created on October 20, 2014, 11:26 PM
  */
 
+#if defined(__APPLE__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
 #include "Map.h"
-#include "GL/glut.h"
 #include "Cell.h"
 #include "Entity.h"
 #include "Defines.h"
@@ -135,4 +139,6 @@ int Map::add_spell(Spell* sp, Entity* caster, unsigned t){
     // We now we have the goto to cast the spell.
     sd = new Spell_Details;
     
+    //added because error was thrown that no int was returned
+    return 0;
 }

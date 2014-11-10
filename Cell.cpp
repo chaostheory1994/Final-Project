@@ -5,11 +5,16 @@
  * Created on October 20, 2014, 11:42 PM
  */
 
+#if defined(__APPLE__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
 #include "Cell.h"
 #include "Defines.h"
 #include <cstdlib>
 #include <cstdio>
-#include <GL/glut.h>
+
 
 std::queue<Entity*> Cell::xfer_ent_que;
 

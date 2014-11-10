@@ -1,5 +1,6 @@
 #if defined(__APPLE__)
 #include <GLUT/glut.h>
+#include <sys/time.h>
 #else
 #include <GL/glut.h>
 #endif
@@ -44,6 +45,8 @@ void my_mouse_passive(int x, int y);
 void my_mouse(int button, int state, int mousex, int mousey);
 void my_idle(void);
 #ifdef __linux__
+unsigned GetTickCount();
+#elif __APPLE__
 unsigned GetTickCount();
 #endif
 bool gluInvertMatrix(const float*, float*);
@@ -352,7 +355,7 @@ void my_idle(void) {
     return;
 }
 
-#ifndef __WIN32
+#ifdef __linux__
 unsigned GetTickCount() {
     timespec ts;
     if (clock_gettime(CLOCK_REALTIME, &ts)) {
@@ -360,7 +363,17 @@ unsigned GetTickCount() {
     }
     return ((long long) ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
 }
+#elif defined(__APPLE__)
+unsigned GetTickCount() {
+    
+    timeval time;
+    gettimeofday(&time, NULL);
+    return ((long long) time.tv_sec * 1000) + (time.tv_usec / 1000);
+    
+}
+
 #endif
+
 
 /* Method Copied From
  * http://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix
