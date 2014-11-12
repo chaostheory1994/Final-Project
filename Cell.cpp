@@ -14,11 +14,6 @@
 #include "Defines.h"
 #include <cstdlib>
 #include <cstdio>
-#if defined(__APPLE__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
 
 std::queue<Entity*> Cell::xfer_ent_que;
 std::queue<Spell*> Cell::xfer_spell_que;

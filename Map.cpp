@@ -11,11 +11,6 @@
 #include <GL/glut.h>
 #endif
 #include "Map.h"
-#if defined(__APPLE__)
-#include <GLUT/glut.h>
-#else
-#include <GL/glut.h>
-#endif
 #include "Cell.h"
 #include "Entity.h"
 #include "Defines.h"
