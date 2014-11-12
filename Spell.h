@@ -26,11 +26,11 @@ public:
     Spell();
     Spell(const Spell& orig);
     virtual ~Spell();
-    virtual int cast(Spell_Details*, unsigned long long);
+    virtual Spell* cast(Spell_Details*, unsigned long long);
     virtual void update();
     // virtual void travel();
-    virtual void complete();
-    virtual void draw(float);
+    //virtual void complete();
+    virtual void draw();
     Collision_Det* get_collision_details();
     /* Abilities cannot collide with each other but can collide with entities.
      * This method will allow you to evaluate what to do when a collision occurs with
@@ -40,11 +40,23 @@ public:
     void set_name(std::string*);
     int get_id();
     bool isCD(unsigned long long);
+    float getX();
+    float getY();
+    float getZ();
+    float getSpeedX();
+    float getSpeedY();
+    float getSpeedZ();
+    bool isComplete();
 protected:
     int id;
+    bool isRef;
     std::string* name;
     unsigned long long next_cast;
-    int cooldown;
+    float cooldown;
+    float distX, distY, distZ;
+    float dx, dy, dz;
+    float x, y, z;
+    bool isCompleted;
     /* Internal Collision Struct */
     /* To know how to define this look in Defines.h
      * It is here to tell the collision system what type of collision to apply. */

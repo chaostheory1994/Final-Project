@@ -14,11 +14,14 @@
 #define CAMERA_HEIGHT 50
 #define JAVA_IS_BUTT
 #define UPDATE_RADIUS 37 /* Updates the cells in a square this big around player. */
-#define DRAW_RADIUS 11 /* Draws only this big of a square around the player.
+#define DRAW_RADIUS 11 /* Draws only this big of a square around the player. */
+#define GAME_UPDATE_SPEED 25 /* in fps, how many times a second the game should update. */
+
+const int SKIP_TICKS = 1000 / GAME_UPDATE_SPEED;
 
 /* Collision Macros */
-#define BOX_COL 0x1; /* Box */
-#define SPHERE_COL 0x2; /* Sphere */
+#define BOX_COL 0x1 /* Box */
+#define SPHERE_COL 0x2 /* Sphere */
 #define CONE_COL 0x3 /* Cone */
 #define CYL_COL 0x4 /* Cylinder */
 /* Collision Struct*/
@@ -30,11 +33,12 @@
  * The values in the struct are going to be used differently between methods.
  * All the methods are defined by the type variable. The macros right above this,
  * are the different types. box, sphere, cone, cylinder.
+ * All these shapes are going to be treated like that are alligned with the world.
+ * 
  * Box:
- *      pos is going to be an xyz coordinate of one corner. prefereably the bottom one.
- *      value is going to be the complete opposite corner. So the map can create a box
- *          with the two points given.
- *      dist is unused in this method.
+ *      pos will be defined as the center of one of the squares.
+ *      value is going to be defined as the center of the other square.
+ *      dist the size of the all the square's sides on both ends.
  * Sphere:
  *      pos is going to be the center of the sphere. 
  *      value is going to be unused in this method.
@@ -42,9 +46,9 @@
  * Cone:
  *      pos is going to be the point of the cone.
  *      value is going to be the direction of the cone.
- *      dist is going to be radius at the end.
+ *      dist is going to be the degrees from each end of the cone.
  * Cylinder:
- *      pos is going to be the center of on of the circles at the end. pref bottom.
+ *      pos is going to be the center of one of the circles at the end. pref bottom.
  *      value is going to be the center of the other end of the cylinder.
  *      dist is the radius of both circles.
  * 
@@ -62,6 +66,10 @@ struct Collision_Det{
 #define OUTBOUND_LEFT 0x03
 #define OUTBOUND_RIGHT 0x04
 
+// Spell Stuff
+// Global Cooldown
+#define GLOBAL_COOLDOWN 1.5
+#define IGNORE_COOLDOWN 0
 
 #endif	/* DEFINES_H */
 

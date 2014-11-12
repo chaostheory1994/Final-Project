@@ -11,8 +11,10 @@
 
 #include "Player.h"
 #include "Entity.h"
+#include "Spell.h"
 #include "Map.h"
 #include "Defines.h"
+#include "FrozenOrb.h"
 
 #ifdef __WIN32
 #include <windows.h>
@@ -25,9 +27,8 @@
 #define min(a,b) ((a)<(b)?(a):(b))
 #define my_assert(X,Y) ((X)?(void) 0:(printf("error:%s in %s at %d", Y, __FILE__, __LINE__), myabort()))
 #define DELTA_TIME 10  /* defined to be 10 msec */
-#define GAME_UPDATE_SPEED 25 /* in fps, how many times a second the game should update. */
 #define MAX_FRAME_SKIP 5 /* Max number of frames that the program can skip to update game mechanics */
-#define CAMERA_ANGLE 0 /* WARNING: right now anything but 0 will mess with mouse raycast */
+#define CAMERA_ANGLE 20 
 
 #define DEFAULT_WINDOW_SIZE_X 200.0
 #define DEFAULT_WINDOW_SIZE_Y 200.0
@@ -48,8 +49,7 @@ unsigned GetTickCount();
 #endif
 bool gluInvertMatrix(const float*, float*);
 
-// Variables.
-const int SKIP_TICKS = 1000 / GAME_UPDATE_SPEED;
+// Variables
 unsigned long long next_game_tick;
 unsigned long long next_fps_update;
 float interpolation;
@@ -161,7 +161,7 @@ void my_reshape(int w, int h) {
  by typing the letter q.
  */
 void my_keyboard(unsigned char key, int x, int y) {
-
+    Spell* ref;
     switch (key) {
         case 'q':
         case 'Q':
@@ -172,10 +172,9 @@ void my_keyboard(unsigned char key, int x, int y) {
             printf("Player Coord: %f, %f\n", p->getX(), p->getZ());
             break;
         case '2':
-            p->move(1, 1);
-            break;
-        case '3':
-            p->move(-1, -1);
+            puts("2 Hit!");
+            ref = new FrozenOrb();
+            m->add_spell(ref, p, GetTickCount());
             break;
 #endif
         default: break;
@@ -280,8 +279,9 @@ void my_mouse(int button, int state, int mousex, int mousey) {
         int view[4];
         double ray_origin[3];
         double ray_point[3];
-        double ray[3];
+        double ray_dir[3];
         int i;
+        double t;
         
         glGetDoublev(GL_MODELVIEW_MATRIX, model);
         glGetDoublev(GL_PROJECTION_MATRIX, proj);
@@ -296,14 +296,19 @@ void my_mouse(int button, int state, int mousex, int mousey) {
                 ray_point, ray_point+1, ray_point+2);
         
         for(i = 0; i < 3; i++)
-            ray[i] = ray_point[i] - ray_origin[i];
+            ray_dir[i] = ray_point[i] - ray_origin[i];
         
+        // Next we calculate t.
+        // y = P + td
+        // 0 = Py + tdy
+        t = -ray_origin[1] / ray_dir[1];
 #ifdef DEBUG_MESSAGES
-        printf("%f, %f, %f\n", ray[0], ray[1], ray[2]);
-        //printf("%f, %f, %f\n", ray[0] * 50, ray[1] * 50, ray[2] * 50);
+        printf("%f, %f, %f\n", ray_origin[0] + ray_dir[0] * t - p->getX(), 
+                ray_origin[1] + ray_dir[1] * t, 
+                ray_origin[2] + ray_dir[2] * t - p->getZ());
 #endif
         
-        p->move(ray[0] * (49.0/99.0), ray[2] * (49.0/99.0));
+       p->move(ray_origin[0] + ray_dir[0]*t - p->getX(), ray_origin[2] + ray_dir[2]*t - p->getZ());
     }
 }
 

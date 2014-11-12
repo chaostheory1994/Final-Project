@@ -15,7 +15,7 @@ public:
     Entity(const Entity& orig);
     virtual ~Entity();
     /* Simply draw the ability! */
-    virtual void draw(float);
+    virtual void draw();
     /* This will be used to update anything else */
     virtual void update();
     /* This will initialize a move to the object.
@@ -31,11 +31,16 @@ public:
      * Then it will move the Entity back onto the map. 
      * You do not need to override this method unless you want something different to happen of course.
      * If you wish to override, the possible macros that will be passed are in Defines.h 
-     * if you do not want to override, all you need to do is */
+     * if you do not want to override, all you need to do is ignore it. */
     virtual void map_outbound(int);
+    /* This is another override you can choose to ignore. 
+     * It is here mainly for spells. When a spell is cast, an entity should stop to cast it. */
+    virtual void cancel_movement();
     Collision_Det* get_collision_details();
     float getX();
     float getZ();
+    float getSpeedX();
+    float getSpeedZ();
 protected:
     float health;
     float resource;

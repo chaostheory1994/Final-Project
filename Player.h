@@ -18,7 +18,7 @@ public:
     Player(const Player& orig);
     void move(float, float);
     void update();
-    void draw(float);
+    void draw();
     void update_pos();
     //void map_outbound(int);
     virtual ~Player();

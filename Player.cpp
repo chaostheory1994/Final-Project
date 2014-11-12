@@ -6,7 +6,11 @@
  */
 
 #include "Player.h"
+#if defined(__APPLE__)
+#include <GLUT/glut.h>
+#else
 #include <GL/glut.h>
+#endif
 #include "Spell.h"
 #include "Cell.h"
 #include "Defines.h"
@@ -34,7 +38,7 @@ Player::~Player() {
 
 /* The method that will draw the player when called.
  * The method assumes the player has been translated where he needs to be. */
-void Player::draw(float f){
+void Player::draw(){
     glColor3f(0, 1, 0);
     glRotatef(-direction * (180/M_PI), 0, 1.0, 0); 
     glBegin(GL_POLYGON);
@@ -52,7 +56,7 @@ void Player::update(){
 /* A method to update the player's position per SKIP_TICKS */
 void Player::update_pos(){
     // Do player movement.
-    if(abs(distX) <= abs(dx)){
+    if(fabs(distX) <= fabs(dx)){
         x += distX;
         distX = 0;
     }
@@ -60,7 +64,7 @@ void Player::update_pos(){
         distX -= dx;
         x += dx;
     }
-    if(abs(distZ) <= abs(dz)){
+    if(fabs(distZ) <= fabs(dz)){
         z += distZ;
         distZ = 0;
     }

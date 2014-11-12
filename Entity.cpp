@@ -43,10 +43,19 @@ void Entity::map_outbound(int id){
     }
 }
 
+void Entity::cancel_movement(){
+    dx = 0;
+    dz = 0;
+    distX = 0;
+    distZ = 0;
+}
+
 void Entity:: update_pos(){ return; }
 float Entity::getX(){ return x;}
 float Entity::getZ(){ return z;}
-void Entity::draw(float f){ return; };
+float Entity::getSpeedX(){ return dx; }
+float Entity::getSpeedZ(){ return dz; }
+void Entity::draw(){ return; };
 void Entity::update(){ return; }
 void Entity::dispatch_collision(Entity*){ return; }
 Collision_Det* Entity::get_collision_details(){ return cd; }

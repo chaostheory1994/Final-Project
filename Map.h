@@ -20,15 +20,17 @@ public:
     void draw();
     void set_player(Entity*);
     void add_entity(Entity*);
-    int add_spell(Spell*, Entity*, unsigned t);
+    int add_spell(Spell*, Entity*, unsigned long long t);
     void update();
     void update_movement();
     void recell_entity(Entity*);
     void update_mouse(int x, int y);
+    static Map* get_current_map();
 private:
     int sizeX;
     int sizeZ;
     int mouseX, mouseY;
+    static Map* currmap;
     Cell*** cells; 
     Entity* player;
     
