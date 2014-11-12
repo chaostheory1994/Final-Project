@@ -5,6 +5,11 @@
  * Created on October 20, 2014, 11:42 PM
  */
 
+#if defined(__APPLE__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
 #include "Cell.h"
 #include "Defines.h"
 #include <cstdlib>

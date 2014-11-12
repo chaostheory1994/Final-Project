@@ -1,5 +1,6 @@
 #if defined(__APPLE__)
 #include <GLUT/glut.h>
+#include <sys/time.h>
 #else
 #include <GL/glut.h>
 #endif
@@ -15,6 +16,7 @@
 #include "Map.h"
 #include "Defines.h"
 #include "FrozenOrb.h"
+#include "Ghost.h"
 
 #ifdef __WIN32
 #include <windows.h>
@@ -45,6 +47,8 @@ void my_mouse_passive(int x, int y);
 void my_mouse(int button, int state, int mousex, int mousey);
 void my_idle(void);
 #ifdef __linux__
+unsigned GetTickCount();
+#elif __APPLE__
 unsigned GetTickCount();
 #endif
 bool gluInvertMatrix(const float*, float*);
@@ -134,6 +138,8 @@ void my_setup(int argc, char **argv) {
     p = new Player(0, 0);
     m = new Map(100, 100);
     m->set_player(p);
+    
+    m->add_entity(new Ghost(1,1));
     // We are going to setup the camera location.
     // The default camera distance will be defined as a macro.
     // We can adjust the degrees using the macro.
@@ -357,7 +363,7 @@ void my_idle(void) {
     return;
 }
 
-#ifndef __WIN32
+#ifdef __linux__
 unsigned GetTickCount() {
     timespec ts;
     if (clock_gettime(CLOCK_REALTIME, &ts)) {
@@ -365,7 +371,17 @@ unsigned GetTickCount() {
     }
     return ((long long) ts.tv_sec * 1000) + (ts.tv_nsec / 1000000);
 }
+#elif defined(__APPLE__)
+unsigned GetTickCount() {
+    
+    timeval time;
+    gettimeofday(&time, NULL);
+    return ((long long) time.tv_sec * 1000) + (time.tv_usec / 1000);
+    
+}
+
 #endif
+
 
 /* Method Copied From
  * http://stackoverflow.com/questions/1148309/inverting-a-4x4-matrix

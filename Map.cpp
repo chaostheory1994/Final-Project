@@ -5,6 +5,11 @@
  * Created on October 20, 2014, 11:26 PM
  */
 
+#if defined(__APPLE__)
+#include <GLUT/glut.h>
+#else
+#include <GL/glut.h>
+#endif
 #include "Map.h"
 #if defined(__APPLE__)
 #include <GLUT/glut.h>
@@ -140,6 +145,12 @@ void Map::update_movement() {
 void Map::set_player(Entity* p) {
     player = p;
     cells[(int) (p->getX() / 100)][(int) (p->getZ() / 100)]->add_entity(player);
+}
+
+/* Add any entity to the map based off the entity's position variables
+ * May not be the final function for this purpose but I created it to add a ghost to the map for beta testing */
+void Map::add_entity(Entity* p){
+    cells[(int)(p->getX() / 100)][(int)(p->getZ() / 100)]->add_entity(p);
 }
 
 /* Simple interface for the main loop to have the map keep track of mouse coordinates. */
