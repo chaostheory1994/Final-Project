@@ -19,6 +19,9 @@
 #define GAME_UPDATE_SPEED 25 /* in fps, how many times a second the game should update. */
 
 const int SKIP_TICKS = 1000 / GAME_UPDATE_SPEED;
+const int FPS_SKIP_TICKS = 1000;
+
+float get_fps();
 
 /* Collision Macros */
 #define BOX_COL 0x1 /* Box */

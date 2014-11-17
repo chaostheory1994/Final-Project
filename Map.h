@@ -26,6 +26,7 @@ public:
     void recell_entity(Entity*);
     void update_mouse(int x, int y);
     static Map* get_current_map();
+    void get_mouse(int*, int*);
 private:
     int sizeX;
     int sizeZ;

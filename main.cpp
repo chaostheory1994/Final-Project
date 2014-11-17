@@ -17,6 +17,8 @@
 #include "Defines.h"
 #include "FrozenOrb.h"
 #include "Ghost.h"
+#include "UIBaseLeft.h"
+#include "UIExample.h"
 
 #ifdef __WIN32
 #include <windows.h>
@@ -32,8 +34,8 @@
 #define MAX_FRAME_SKIP 5 /* Max number of frames that the program can skip to update game mechanics */
 #define CAMERA_ANGLE 20 
 
-#define DEFAULT_WINDOW_SIZE_X 200.0
-#define DEFAULT_WINDOW_SIZE_Y 200.0
+#define DEFAULT_WINDOW_SIZE_X 800.0
+#define DEFAULT_WINDOW_SIZE_Y 600.0
 
 void myabort(void);
 void glut_setup(void);
@@ -46,6 +48,7 @@ void my_mouse_drag(int x, int y);
 void my_mouse_passive(int x, int y);
 void my_mouse(int button, int state, int mousex, int mousey);
 void my_idle(void);
+void toggle_fullscreen();
 #ifdef __linux__
 unsigned GetTickCount();
 #elif __APPLE__
@@ -56,13 +59,19 @@ bool gluInvertMatrix(const float*, float*);
 // Variables
 unsigned long long next_game_tick;
 unsigned long long next_fps_update;
+float fps;
+float fov_angle;
 float interpolation;
 int loops;
+int unused_width;
+int unused_height;
 int width;
 int height;
+bool isFullscreen;
 // Game Variables
 Player* p;
 Map* m;
+UIBaseLeft* menu;
 // Camera Variables.
 int camera_offsetX;
 int camera_offsetZ;
@@ -97,12 +106,17 @@ void glut_setup(void) {
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
     /* make a 400x300 window with the title of "GLUT Skeleton" placed at the top left corner */
-    glutInitWindowSize(800, 600);
-    width = 800;
-    height = 600;
+    glutInitWindowSize(DEFAULT_WINDOW_SIZE_X, DEFAULT_WINDOW_SIZE_Y);
+    width = DEFAULT_WINDOW_SIZE_X;
+    height = DEFAULT_WINDOW_SIZE_Y;
     glutInitWindowPosition(0, 0);
-    glutCreateWindow("GLUT Demo 1");
-
+    glutCreateWindow("Diablo...Esc");
+    
+    /* Setup variables for fullscren use */
+    unused_width = glutGet(GLUT_SCREEN_WIDTH);
+    unused_height = glutGet(GLUT_SCREEN_HEIGHT);
+    isFullscreen = false;
+    
     /*initialize callback functions */
     glutDisplayFunc(my_display);
     glutReshapeFunc(my_reshape);
@@ -135,8 +149,10 @@ void my_setup(int argc, char **argv) {
     float rad;
     next_game_tick = GetTickCount();
     next_fps_update = GetTickCount();
+    fps = 0;
+    menu = NULL;
     p = new Player(0, 0);
-    m = new Map(100, 100);
+    m = new Map(5, 5);
     m->set_player(p);
     
     m->add_entity(new Ghost(1,1));
@@ -169,6 +185,20 @@ void my_reshape(int w, int h) {
 void my_keyboard(unsigned char key, int x, int y) {
     Spell* ref;
     switch (key) {
+        case '+':
+            toggle_fullscreen();
+            break;
+        case 'h':
+            if(menu == NULL) menu = new UIExample();
+            else if(menu->getID() != 1){
+                delete menu;
+                menu = new UIBaseLeft();
+            }
+            else {
+                delete menu;
+                menu = NULL;
+            }
+            break;
         case 'q':
         case 'Q':
             exit(0);
@@ -277,7 +307,14 @@ void my_mouse(int button, int state, int mousex, int mousey) {
         printf("%f, %f, %f\n", x, y, z);
 #endif
         * End Of Section*/
-        
+        // First we need to see if the player clicked in a panel.
+        // If a panel is open the player will not move.
+        if(menu != NULL && mousex < (width / 3)){
+            menu->interact(mousex, mousey);
+            return;
+        }
+        else if(menu != NULL) return;
+
         /* This version of ray casting
          * uses a glu call gluUnProject*/
         double model[16];
@@ -293,14 +330,16 @@ void my_mouse(int button, int state, int mousex, int mousey) {
         glGetDoublev(GL_PROJECTION_MATRIX, proj);
         glGetIntegerv(GL_VIEWPORT, view);
         
-        gluUnProject(mousex, view[3] - mousey, 0.0,
-                model, proj, view,
-                ray_origin, ray_origin+1, ray_origin+2);
         
-        gluUnProject(mousex, view[3] - mousey, 1.0,
+        if(gluUnProject(mousex, view[3] - mousey, 0.0,
                 model, proj, view,
-                ray_point, ray_point+1, ray_point+2);
+                ray_origin, ray_origin+1, ray_origin+2) == GL_FALSE) printf("ERR: gluUnProject 1 failed!\n");
         
+        if(gluUnProject(mousex, view[3] - mousey, 1.0,
+                model, proj, view,
+                ray_point, ray_point+1, ray_point+2) == GL_FALSE) printf("ERR: gluUnProject 2 failed!\n");
+        printf("%f, %f, %f\n", ray_origin[0], ray_origin[1], ray_origin[2]);
+        printf("%f, %f, %f\n", ray_point[0], ray_point[1], ray_point[2]);
         for(i = 0; i < 3; i++)
             ray_dir[i] = ray_point[i] - ray_origin[i];
         
@@ -320,9 +359,38 @@ void my_mouse(int button, int state, int mousex, int mousey) {
 
 
 void my_display(void) {
+    int line_x = 0;
     /* clear the buffer */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+    // Seeing if fps needs updated.
+    if(GetTickCount() > next_fps_update){
+        fps = 0;
+        next_fps_update += FPS_SKIP_TICKS;
+    }
+    // Draw any type of menus.
+    if(menu != NULL){
+        line_x = width/3;
+        glViewport(0, 0, line_x, height);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        gluOrtho2D(0, line_x, 0, height);
+        glColor3f(1, 0, 0);
+        
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        menu->set_draw_size(line_x, height);
+        menu->draw();
+    }
+    
+    // Drawing Game
+    glViewport(line_x, 0, width - line_x, height);
+    
+    /* setup for simple 2d projection */
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    /* set the viewable portion  */
+    gluPerspective(40, width / height, 1, 100.0);
+    
     glColor3f(1, 0, 0);
 
     /* draw something */
@@ -361,6 +429,37 @@ void my_idle(void) {
     // Display Screen
     my_display();
     return;
+}
+
+/* This method does what it says, toggles fullscreen. */
+void toggle_fullscreen(){
+    int temp;
+    // First we need to check if glut was able to get the screen coordinates.
+    if(!isFullscreen){
+        if(unused_width == 0 || unused_height == 0){
+            printf("ERR: GLUT was unable to acquire screen resolution.\n Fullscreen is unavailable.\n");
+            return;
+        }
+    }
+    // If we have available coordinates to switch, lets switch.
+    temp = width;
+    width = unused_width;
+    unused_width = temp;
+    
+    temp = height;
+    height = unused_height;
+    unused_height = temp;
+    
+    glutPositionWindow(0,0);
+    glutReshapeWindow(width, height);
+    if(!isFullscreen){
+        glutFullScreen();
+    }
+    isFullscreen = !isFullscreen;
+}
+
+float get_fps(){
+    return fps;
 }
 
 #ifdef __linux__

@@ -14,6 +14,7 @@
 #include "Defines.h"
 #include <cstdlib>
 #include <cstdio>
+#include <queue>
 
 std::queue<Entity*> Cell::xfer_ent_que;
 std::queue<Spell*> Cell::xfer_spell_que;
@@ -125,12 +126,13 @@ void Cell::add_spell(Spell* s){
 /* Will go ahead and update all the entities in the cell.
  * Will also initialize the movement of spells. */
 void Cell::update() {
-    Entity_List* Ebegin;
-    Spell_List* slCurr = spFirst;
-    // First lets update the spell in the area.
-    
-    // Lets do collision stuff!
-    // Generate a list of Entities on surrounding Cells.
+    // Since collision is depreicated at the moment,
+    // This will simply iterate though the entities' update().
+    Entity_List* curr = first;
+    while( curr != NULL){
+        curr->e->update();
+        curr = curr->next;
+    }
 }
 
 /* Delete a node in the list and return the next node.*/

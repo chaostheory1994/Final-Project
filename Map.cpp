@@ -214,3 +214,10 @@ int Map::add_spell(Spell* sp, Entity* caster, unsigned long long t) {
 Map* Map::get_current_map(){
     return currmap;
 }
+
+/* A function for my example UI 
+ * Simply sets the variables to the mouse coordinates. */
+void Map::get_mouse(int* x, int* y){
+    *x = mouseX;
+    *y = mouseY;
+}
