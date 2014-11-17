@@ -71,6 +71,7 @@ void Map::update() {
     Entity* Etemp;
     Spell* Stemp;
     int tfer_x, tfer_z;
+    int i, j, x, z;
     
     
 
@@ -117,6 +118,16 @@ void Map::update() {
             delete Stemp;
         }
         else cells[tfer_x + 1][tfer_z + 1]->add_spell(Stemp);
+    }
+    // Call update on all entities. After all movement has been settled.
+    x = (player->getX() / CELL_SIZE) - (DRAW_RADIUS / 2);
+    z = (player->getZ() / CELL_SIZE) - (DRAW_RADIUS / 2);
+    for(i = 0; i < UPDATE_RADIUS && (i + x) < sizeX; i++){
+        if((i + x) < 0) continue;
+        for(j = 0; j < UPDATE_RADIUS && (j + z) < sizeZ; j++) {
+            if((j + z) < 0) continue;
+            cells[i+x][j+z]->update();
+        }
     }
 }
 

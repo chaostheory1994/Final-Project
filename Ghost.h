@@ -11,17 +11,18 @@
 #include "Spell.h"
 #include "Entity.h"
 
-//#define MAX_SPELL_COUNT 0
+#define MAX_SPELL_COUNT 1
 
 class Ghost : public Entity{
 public:
     Ghost(float, float);
     Ghost(const Ghost& orig);
     void move(float, float);
-    void update();
-    void draw(float);
+    void update(unsigned long long clock);
+    void draw();
     void update_pos();
     //void map_outbound(int);
+
     virtual ~Ghost();
 private:
 };

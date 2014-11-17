@@ -51,6 +51,7 @@ int Cell::get_size() {
 /* Will draw the cell and all the entities inside it.
  * Even though the player inherits entity it wont be tacked by Cells.  */
 void Cell::draw(float i, int x, int z) {
+    int count = 0;
     Entity_List* curr = first;
     Spell_List* spCurr = spFirst;
     // Start of by drawing the ground.
@@ -266,5 +267,5 @@ bool Cell::is_colliding(Collision_Det* col1, Collision_Det* col2) {
         // Is the rectangular sides facing the other object?
 
     }
-
+    return 0;
 }
