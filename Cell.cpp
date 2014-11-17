@@ -48,12 +48,10 @@ int Cell::get_size() {
     return size;
 }
 
-/* Will draw the cell and all the entities inside it.
- * Even though the player inherits entity it wont be tacked by Cells.  */
+/* Will draw the cell */
 void Cell::draw(float i, int x, int z) {
-    int count = 0;
-    Entity_List* curr = first;
-    Spell_List* spCurr = spFirst;
+    //int count = 0;
+    
     // Start of by drawing the ground.
     glColor3f(0.5, 0.5, 0.5);
     glBegin(GL_POLYGON);
@@ -77,6 +75,15 @@ void Cell::draw(float i, int x, int z) {
     glVertex3f(size / 16, 0, size / 16);
     glEnd();
 #endif
+    
+}
+
+/* This will draw the entities after all the landscape has been drawn. 
+ * This will fix the bug that occurs when an object isnt quite at the next */
+void Cell::draw_objects(float i, int x, int z){
+    Entity_List* curr = first;
+    Spell_List* spCurr = spFirst;
+    
     while (curr != NULL) {
         glPushMatrix();
         glTranslatef(curr->e->getX() - (size * x), 0, curr->e->getZ() - (size * z));

@@ -38,6 +38,7 @@ public:
     void remove_entity(Entity*);
     void remove_entity(int);
     void draw(float, int, int);
+    void draw_objects(float, int, int);
     void update();
     void update_movement();
     int get_size();

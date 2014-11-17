@@ -11,7 +11,7 @@
 #include "Spell.h"
 #include "Entity.h"
 
-#define MAX_SPELL_COUNT 1
+#define GHOST_MAX_SPELL_COUNT 1
 
 class Ghost : public Entity{
 public:

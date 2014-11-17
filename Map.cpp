@@ -46,6 +46,7 @@ void Map::draw() {
     int i, j;
     int x = (player->getX() / CELL_SIZE) - (DRAW_RADIUS / 2);
     int z = (player->getZ() / CELL_SIZE) - (DRAW_RADIUS / 2);
+    // Draw the ground.
     glPushMatrix();
     for (i = 0; i < DRAW_RADIUS && (i + x) < sizeX; i++) {
         if ((i + x) < 0) continue;
@@ -53,6 +54,20 @@ void Map::draw() {
         for (j = 0; j < DRAW_RADIUS && (j + z) < sizeZ; j++) {
             if ((j + z) < 0) continue;
             cells[i + x][j + z]->draw(0.0, i + x, j + z);
+            glTranslatef(0, 0, CELL_SIZE);
+        }
+        glPopMatrix();
+        glTranslatef(CELL_SIZE, 0, 0);
+    }
+    glPopMatrix();
+    // Draw the Entities/Spells
+    glPushMatrix();
+    for (i = 0; i < DRAW_RADIUS && (i + x) < sizeX; i++) {
+        if ((i + x) < 0) continue;
+        glPushMatrix();
+        for (j = 0; j < DRAW_RADIUS && (j + z) < sizeZ; j++) {
+            if ((j + z) < 0) continue;
+            cells[i + x][j + z]->draw_objects(0.0, i + x, j + z);
             glTranslatef(0, 0, CELL_SIZE);
         }
         glPopMatrix();

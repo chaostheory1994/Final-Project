@@ -10,7 +10,7 @@
 #include "Spell.h"
 #include "Entity.h"
 
-#define MAX_SPELL_COUNT 2
+#define PLAYER_MAX_SPELL_COUNT 2
 
 class Player : public Entity{
 public:
