@@ -69,6 +69,9 @@ int camera_offsetZ;
 int cameraY;
 int camera_distance;
 
+//TEST GHOST
+Ghost* firstGhost;
+
 void myabort(void) {
     abort();
     exit(1); /* exit so g++ knows we don't return. */
@@ -137,9 +140,10 @@ void my_setup(int argc, char **argv) {
     next_fps_update = GetTickCount();
     p = new Player(0, 0);
     m = new Map(100, 100);
+    firstGhost = new Ghost(3,3);
     m->set_player(p);
     
-    m->add_entity(new Ghost(1,1));
+    m->add_entity(firstGhost);
     // We are going to setup the camera location.
     // The default camera distance will be defined as a macro.
     // We can adjust the degrees using the macro.
@@ -148,9 +152,9 @@ void my_setup(int argc, char **argv) {
     cameraY = cos(rad) * camera_distance;
     camera_offsetZ = sin(rad) * camera_distance;
     camera_offsetX = 0;
-#ifdef DEBUG_MESSAGES
+    #ifdef DEBUG_MESSAGES
     // Section for Debug Messages.
-#endif
+    #endif
     return;
 }
 
@@ -348,11 +352,12 @@ void my_display(void) {
 
 void my_idle(void) {
     loops = 0;
-    while(GetTickCount() > next_game_tick && loops < MAX_FRAME_SKIP){
+    unsigned long long tickCount = GetTickCount();
+    while(tickCount > next_game_tick && loops < MAX_FRAME_SKIP){
         // Update Game Stuff
         m->update_movement();
         m->update();
-        
+        firstGhost->update(tickCount);
         // Update Timing Stuff
         next_game_tick += SKIP_TICKS;
         loops++;
