@@ -16,14 +16,16 @@
 #include "Ghost.h"
 #include "Spell.h"
 #include "Cell.h"
+#include "Lazer.h"
 #include "Defines.h"
+#include "Map.h"
 #include <cmath>
 #include <cstdio>
-GLfloat theta;
-GLfloat idleMoveX, idleMoveZ;
-unsigned long long nextMove;
+//GLfloat theta;
 
-
+#define GHOST_DEFAULT_SPEED .05 /* m/s */
+#define FIRING_RATE 250 /* MILLISECONDS */
+#define CHANGE_DIRECTION_RATE 1000 /* MILLISECONDS */
 /* Constructor for the Ghost
  * Will take the x,z coordinate in the world
  */
@@ -31,10 +33,9 @@ Ghost::Ghost(float beginX, float beginZ) {
     // First we set which cell the Ghost will be in.
     x = beginX;
     z = beginZ;
-    theta = 0;
-    idleMoveX = 0;
-    idleMoveZ = 0;
-    nextMove = 0;
+    //theta = 0;
+    readyToFire = 0;
+    tickCounter = 0;
 }
 
 Ghost::Ghost(const Ghost& orig) {
@@ -51,8 +52,9 @@ Ghost::~Ghost() {
  * The method assumes the Ghost has been translated where he needs to be. */
 void Ghost::draw(){
     //glColor3f(0.95, 0.95, 0.95);
-    glTranslatef(idleMoveX, 0.0, idleMoveZ);
-    glRotatef(-theta * (180/M_PI), 0, 1.0, 0);
+    //glTranslatef(idleMoveX, 0.0, idleMoveZ);
+    //glRotatef(-theta * (180/M_PI), 0, 1.0, 0);
+    glRotatef(-direction * (180/M_PI), 0, 1.0, 0);
     glBegin(GL_TRIANGLES);
     
     glColor3f( 1.0f, 0.0f, 0.0f ); glVertex3f( 0, 2, 0);
@@ -76,38 +78,56 @@ void Ghost::draw(){
 }
 
 /* A method to update the Ghost per SKIP_TICKS */
-void Ghost::update(unsigned long long clock){
+void Ghost::update(){
+    
+    tickCounter += SKIP_TICKS;
+    readyToFire += SKIP_TICKS;
     //do the pyramid rotation
-    theta += .05;
+    //theta += .05;
 
+    if (readyToFire >= FIRING_RATE) {
+        readyToFire -= FIRING_RATE;
+        fire_Lazer();
+    }
     //check to see if a second has passed
     //if so do a random movement
-    if ( clock > nextMove) {
+    if ( tickCounter >= CHANGE_DIRECTION_RATE) {
+        tickCounter -= CHANGE_DIRECTION_RATE;
+        
         int r = rand()%4 + 1;
         if (r == 1) {
-            idleMoveX += 5;
+            move(5,0);
         }
         else if (r == 2)
         {
-            if (idleMoveX >= 5){
-                idleMoveX -= 5;
+            if (x >= 5) {
+                 move(-5,0);
             }
         }
         else if (r == 3) {
-            idleMoveZ += 5;
+            move(0,5);
         }
         else
         {
-            if (idleMoveZ >= 5){
-                idleMoveZ -= 5;
+            if (z >= 5){
+                move(0,-5);
             }
         }
-        
-        nextMove =  clock + 1000;
+       
     }
     
 }
 
+/* a method to fire the ghost's lazer. */
+void Ghost::fire_Lazer() {
+    Map* map;
+    Spell* ref;
+    
+    ref = new Lazer();
+    map = Map::get_current_map();
+    float dir[] = {0, 0, 1};
+    map->add_spell(ref, this, dir, NULL);
+}
 
 /* A method to update the Ghost's position per SKIP_TICKS */
 void Ghost::update_pos(){
@@ -136,6 +156,7 @@ void Ghost::update_pos(){
 void Ghost::move(float px, float pz){
      if(px == 0.0f && pz == 0.0f) return;
     // Special Case px = 0;
+    
     if(px == 0.0f)
         direction = (M_PI / 2.0f) * (pz / abs(pz));
     else if(pz == 0.0f && px < 0.0f) direction = M_PI;

@@ -18,13 +18,16 @@ public:
     Ghost(float, float);
     Ghost(const Ghost& orig);
     void move(float, float);
-    void update(unsigned long long clock);
+    void update();
     void draw();
     void update_pos();
+    void fire_Lazer();
     //void map_outbound(int);
 
     virtual ~Ghost();
 private:
+    unsigned long long tickCounter;
+    unsigned long long readyToFire;
 };
 
 #endif	/* GHOST_H */

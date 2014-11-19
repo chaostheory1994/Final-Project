@@ -21,6 +21,7 @@ public:
     void set_player(Entity*);
     void add_entity(Entity*);
     int add_spell(Spell*, Entity*, unsigned long long t);
+    int add_spell(Spell*, Entity*, float*, unsigned long long t);
     void update();
     void update_movement();
     void recell_entity(Entity*);

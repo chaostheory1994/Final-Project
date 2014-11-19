@@ -235,7 +235,46 @@ int Map::add_spell(Spell* sp, Entity* caster, unsigned long long t) {
     
     // Now we have to register the new cast with the cell.
     cells[(int)(casted->getX() / CELL_SIZE)][(int)(casted->getZ() / CELL_SIZE)]->add_spell(casted);
+    
+    return 0;
 }
+
+/* Adding a spell is a bit complicated since to setup the details, we need to convert mouse to screen coordinates again. */
+int Map::add_spell(Spell* sp, Entity* caster, float* dir, unsigned long long t) {
+    Spell_Details* sd;
+    Spell* casted;
+    
+    // First we check is the spell on cooldown?
+    // if (t != 0 && !sp->isCD(t)) return -1; broken for now.
+    // We now we have to cast the spell.
+    sd = new Spell_Details;
+    // We are actually casting the spell. Not creating a dummy version of the spell.
+    sd->isRef = false;
+    
+    // Now we set the spell details.
+    sd->mouse[0] = dir[0];
+    sd->mouse[1] = dir[1];
+    sd->mouse[2] = dir[2];
+    
+    // Not implemented yet.
+    sd->mouse_release_ptr = NULL;
+    
+    // Who is casting this magnificent spell?
+    sd->player = caster;
+    
+    // Now that the spell_details is all setup, lets cast.
+    casted = sp->cast(sd, t);
+    
+    // Now we have to register the new cast with the cell.
+    cells[(int)(casted->getX() / CELL_SIZE)][(int)(casted->getZ() / CELL_SIZE)]->add_spell(casted);
+    return 0;
+}
+
+
+
+
+
+
 
 Map* Map::get_current_map(){
     return currmap;

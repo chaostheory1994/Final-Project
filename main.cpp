@@ -32,7 +32,7 @@
 #define my_assert(X,Y) ((X)?(void) 0:(printf("error:%s in %s at %d", Y, __FILE__, __LINE__), myabort()))
 #define DELTA_TIME 10  /* defined to be 10 msec */
 #define MAX_FRAME_SKIP 5 /* Max number of frames that the program can skip to update game mechanics */
-#define CAMERA_ANGLE 20 
+#define CAMERA_ANGLE 50
 
 #define DEFAULT_WINDOW_SIZE_X 800.0
 #define DEFAULT_WINDOW_SIZE_Y 600.0
@@ -421,12 +421,11 @@ void my_display(void) {
 
 void my_idle(void) {
     loops = 0;
-    unsigned long long tickCount = GetTickCount();
-    while(tickCount > next_game_tick && loops < MAX_FRAME_SKIP){
+    while(GetTickCount() > next_game_tick && loops < MAX_FRAME_SKIP){
         // Update Game Stuff
         m->update_movement();
         m->update();
-        firstGhost->update(tickCount);
+        //firstGhost->update();
         // Update Timing Stuff
         next_game_tick += SKIP_TICKS;
         loops++;
