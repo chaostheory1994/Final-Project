@@ -14,7 +14,9 @@
 #include "Cell.h"
 #include "Entity.h"
 #include "Defines.h"
+#include "LittleGrass.h"
 #include <queue>
+#include <cstdlib>
 
 Map* Map::currmap = NULL;
 /* Constructor for the map.
@@ -32,6 +34,8 @@ Map::Map(int x, int z) {
         cells[i] = new Cell*[z];
         for (j = 0; j < z; j++) cells[i][j] = new Cell(CELL_SIZE, i, j);
     }
+    
+    populate_world();
     
     currmap = this;
 }
@@ -270,19 +274,28 @@ int Map::add_spell(Spell* sp, Entity* caster, float* dir, unsigned long long t) 
     return 0;
 }
 
-
-
-
-
-
-
 Map* Map::get_current_map(){
     return currmap;
 }
 
+int Map::getSizeX(){ return sizeX; }
+int Map::getSizeZ(){ return sizeZ; }
 /* A function for my example UI 
  * Simply sets the variables to the mouse coordinates. */
 void Map::get_mouse(int* x, int* y){
     *x = mouseX;
     *y = mouseY;
+}
+
+/* Adds Scenery to their correct cells. */
+void Map::add_scenery(Drawable* obj){
+    if(obj == NULL) return;
+    if(obj->getX() < 0.0) return;
+    if(obj->getZ() < 0.0) return;
+    cells[(int)(obj->getX() / CELL_SIZE)][(int)(obj->getZ() / CELL_SIZE)]->add_scenery(obj);
+}
+
+/* This will essentially be a list of scenery initializions and adding them to the world. */
+void Map::populate_world(){
+    add_scenery(new LittleGrass(5, 5));
 }

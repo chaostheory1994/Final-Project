@@ -10,6 +10,7 @@
 
 #include "Entity.h"
 #include "Spell.h"
+#include "Drawable.h"
 //#include "Map.h"
 #include <queue>
 
@@ -25,7 +26,8 @@ struct Collidable_List{
     
 };
 struct Scenery_List{
-    
+    Drawable* obj;
+    Scenery_List* next;
 };
 
 class Cell {
@@ -37,6 +39,7 @@ public:
     void add_spell(Spell*);
     void remove_entity(Entity*);
     void remove_entity(int);
+    void add_scenery(Drawable*);
     void draw(float, int, int);
     void draw_objects(float, int, int);
     void update();
@@ -60,6 +63,7 @@ private:
     int size;
     Entity_List* first;
     Spell_List* spFirst;
+    Scenery_List* scFirst;
     int wbx, wbz;
 };
 

@@ -38,7 +38,7 @@ Lazer::~Lazer() {
 /* Setting up a new Lazer orb to cast */
 Spell* Lazer::cast(Spell_Details* sd, unsigned long long t){
     // Create new generic reference version.
-    Lazer* ret = new Lazer;
+    Lazer* ret = new Lazer();
     float temp;
     
     // Make it 20% cooler by unmaking it a reference verison.

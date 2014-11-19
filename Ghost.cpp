@@ -33,6 +33,10 @@ Ghost::Ghost(float beginX, float beginZ) {
     // First we set which cell the Ghost will be in.
     x = beginX;
     z = beginZ;
+    distX = 0;
+    distZ = 0;
+    dx = 0;
+    dz = 0;
     //theta = 0;
     readyToFire = 0;
     tickCounter = 0;
@@ -79,7 +83,6 @@ void Ghost::draw(){
 
 /* A method to update the Ghost per SKIP_TICKS */
 void Ghost::update(){
-    
     tickCounter += SKIP_TICKS;
     readyToFire += SKIP_TICKS;
     //do the pyramid rotation
@@ -87,8 +90,9 @@ void Ghost::update(){
 
     if (readyToFire >= FIRING_RATE) {
         readyToFire -= FIRING_RATE;
-        fire_Lazer();
+        //fire_Lazer();
     }
+    
     //check to see if a second has passed
     //if so do a random movement
     if ( tickCounter >= CHANGE_DIRECTION_RATE) {
@@ -115,6 +119,9 @@ void Ghost::update(){
         }
        
     }
+#ifdef DEBUG_MESSAGES
+    //printf("Ghost Location: %f, %f\n", x, z);
+#endif
     
 }
 
@@ -126,7 +133,7 @@ void Ghost::fire_Lazer() {
     ref = new Lazer();
     map = Map::get_current_map();
     float dir[] = {0, 0, 1};
-    map->add_spell(ref, this, dir, NULL);
+    map->add_spell(ref, this, dir, IGNORE_COOLDOWN);
 }
 
 /* A method to update the Ghost's position per SKIP_TICKS */

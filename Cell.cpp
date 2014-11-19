@@ -12,6 +12,7 @@
 #endif
 #include "Cell.h"
 #include "Defines.h"
+#include "Drawable.h"
 #include <cstdlib>
 #include <cstdio>
 #include <queue>
@@ -30,6 +31,7 @@ Cell::Cell(int s, int wx, int wz) {
 
     first = NULL;
     spFirst = NULL;
+    scFirst = NULL;
 }
 
 Cell::Cell(const Cell& orig) {
@@ -83,6 +85,16 @@ void Cell::draw(float i, int x, int z) {
 void Cell::draw_objects(float i, int x, int z){
     Entity_List* curr = first;
     Spell_List* spCurr = spFirst;
+    Scenery_List* scCurr = scFirst;
+    
+    // Draw Scenery;
+    while(scCurr != NULL){
+        glPushMatrix();
+        glTranslatef(scCurr->obj->getX() - (size * x), 0, scCurr->obj->getZ() - (size * z));
+        scCurr->obj->draw();
+        glPopMatrix();
+        scCurr = scCurr->next;
+    }
     
     while (curr != NULL) {
         glPushMatrix();
@@ -256,6 +268,13 @@ Spell* Cell::slque_front(){
 
 void Cell::slque_pop(){
     xfer_spell_que.pop();
+}
+
+void Cell::add_scenery(Drawable* obj){
+    Scenery_List* temp = scFirst;
+    scFirst = new Scenery_List;
+    scFirst->obj = obj;
+    scFirst->next = temp;
 }
 
 /* A method that will return true if a collision is occuring between the two details */

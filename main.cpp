@@ -19,6 +19,7 @@
 #include "Ghost.h"
 #include "UIBaseLeft.h"
 #include "UIExample.h"
+#include "HUD.h"
 
 #ifdef __WIN32
 #include <windows.h>
@@ -71,6 +72,7 @@ bool isFullscreen;
 // Game Variables
 Player* p;
 Map* m;
+HUD* hud;
 UIBaseLeft* menu;
 // Camera Variables.
 int camera_offsetX;
@@ -161,6 +163,8 @@ void my_setup(int argc, char **argv) {
     m->set_player(p);
     
     m->add_entity(firstGhost);
+    
+    hud = new HUD(m, p);
     // We are going to setup the camera location.
     // The default camera distance will be defined as a macro.
     // We can adjust the degrees using the macro.
@@ -412,6 +416,8 @@ void my_display(void) {
     
     m->draw();
     //p.draw(0.0);
+    
+    hud->draw();
 
     /* buffer is ready */
     glutSwapBuffers();
