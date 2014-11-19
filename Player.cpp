@@ -25,6 +25,11 @@ Player::Player(float beginX, float beginZ) {
     // First we set which cell the player will be in.
     x = beginX;
     z = beginZ;
+    
+    dx = 0;
+    dz = 0;
+    distX = 0;
+    distZ = 0;
 } 
 
 Player::Player(const Player& orig) {
