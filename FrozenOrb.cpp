@@ -18,7 +18,7 @@
 #include <GL/glut.h>
 #endif
 #include "Map.h"
-#define FO_SPEED 0.5
+#define FO_SPEED 0.25
 #define FO_DIST 10.0
 #define FO_RAD 0.75
 
@@ -72,15 +72,21 @@ Spell* FrozenOrb::cast(Spell_Details* sd, unsigned long long t){
     else ret->direction = atan(sd->mouse[2] / sd->mouse[0]);
     // Make sure direction is in degrees.
     ret->direction = (ret->direction * 180) / M_PI;
+    // Setup Quadratic
+    ret->shape = gluNewQuadric();
+    gluQuadricNormals(ret->shape, GLU_SMOOTH);   // Create Smooth Normals 
+    gluQuadricTexture(ret->shape, GL_TRUE);      // Create Texture Coords 
     return ret;
 }
 
 /* Lets draw an orb! */
 void FrozenOrb::draw(){
-    float i;
+    //float i;
     // Just gonna be a circle for now
     glColor3f(0.0, 0.0, 1.0);
-    glBegin(GL_POLYGON);
+    glTranslatef(0, 2, 0);
+    gluSphere(shape, 1.0f, 32, 32);
+    /*glBegin(GL_POLYGON);
     for(i = -FO_RAD; i <= FO_RAD; i+=0.15){
         glVertex3f(i, y, sqrt((FO_RAD*FO_RAD) - i*i));
     }
@@ -89,7 +95,7 @@ void FrozenOrb::draw(){
     for(i = -FO_RAD; i <= FO_RAD; i+=0.15){
         glVertex3f(i, y, -sqrt((FO_RAD*FO_RAD) - i*i));
     }
-    glEnd();
+    glEnd();*/
 }
 
 /* Pretty much the same as Player::update_pos */

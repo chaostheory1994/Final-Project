@@ -30,6 +30,11 @@ Player::Player(float beginX, float beginZ) {
     dz = 0;
     distX = 0;
     distZ = 0;
+    
+    shape = gluNewQuadric();
+    
+    gluQuadricNormals(shape, GLU_SMOOTH);   // Create Smooth Normals ( NEW )
+    gluQuadricTexture(shape, GL_TRUE);      // Create Texture Coords ( NEW )
 } 
 
 Player::Player(const Player& orig) {
@@ -45,13 +50,51 @@ Player::~Player() {
 /* The method that will draw the player when called.
  * The method assumes the player has been translated where he needs to be. */
 void Player::draw(){
-    glColor3f(0, 1, 0);
+    // Two States of existence! Deep.
+    // Moving or not moving
+    if(dx == 0 && dz == 0){
+        
+    }
+    else{
+        
+    }
+    glColor3f(0.30, 0.39, 0.56);
     glRotatef(-direction * (180/M_PI), 0, 1.0, 0); 
-    glBegin(GL_POLYGON);
+    // Legs
+    glPushMatrix();
+    glTranslatef(0.0, 1.5, 0.0);
+    glScalef(1.0, 6.0, 1.0);
+    glTranslatef(0.0, 0.0, -0.25);
+    gluSphere(shape, 0.25f, 32, 32);
+    glTranslatef(0.0, 0.0, 0.5);
+    gluSphere(shape, 0.25f, 32, 32);
+    glPopMatrix();
+    // Body
+    glColor3f(1.0, 0.0, 0.0);
+    glPushMatrix();
+    glTranslatef(0.0, 2.25, 0.0);
+    glScalef(1, 2, 1);
+    gluSphere(shape, 0.5f, 32, 32);
+    glPopMatrix();
+    glColor3f(1, 1, 1);
+    // Head
+    glPushMatrix();
+    glTranslatef(0.0, 3.5, 0.0);
+    glScalef(1, 1.12, 1);
+    gluSphere(shape, 0.3, 32, 32);
+    glPopMatrix();
+    // Arms
+    glPushMatrix();
+    glTranslatef(0.0, 2.75, 0.0);
+    glScalef(1, 1, 4);
+    gluSphere(shape, 0.25, 32, 32);
+    glPopMatrix();
+    /*glBegin(GL_POLYGON);
+    glNormal3f(0.0, 1.0, 0.0);
     glVertex3f(0.5, 0, 0);
     glVertex3f(-0.5, 0, -0.5);
     glVertex3f(-0.5, 0, 0.5);
-    glEnd();
+    glEnd();*/
 }
 
 /* A method to update the player per SKIP_TICKS */

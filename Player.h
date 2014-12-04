@@ -11,6 +11,7 @@
 #include "Entity.h"
 
 #define PLAYER_MAX_SPELL_COUNT 2
+#define PLAYER_HEIGHT 6
 
 class Player : public Entity{
 public:
@@ -23,6 +24,7 @@ public:
     //void map_outbound(int);
     virtual ~Player();
 private:
+    GLUquadricObj* shape;
 };
 
 #endif	/* PLAYER_H */

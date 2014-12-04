@@ -57,6 +57,7 @@ void Cell::draw(float i, int x, int z) {
     // Start of by drawing the ground.
     glColor3f(0.5, 0.5, 0.5);
     glBegin(GL_POLYGON);
+    glNormal3f(0.0, 1.0, 0.0);
     glVertex3f(0, 0, 0);
     glVertex3f(0, 0, size);
     glVertex3f(size, 0, size);

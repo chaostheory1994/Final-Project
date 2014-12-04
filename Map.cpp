@@ -26,7 +26,7 @@ Map::Map(int x, int z) {
     // For setting up a simple map, the size will be number of cells
     // Simple 2D array will be setup. 
     int i, j;
-
+    
     sizeX = x;
     sizeZ = z;
     cells = new Cell**[x];
@@ -38,6 +38,7 @@ Map::Map(int x, int z) {
     populate_world();
     
     currmap = this;
+    
 }
 
 Map::Map(const Map& orig) {
@@ -78,6 +79,8 @@ void Map::draw() {
         glTranslatef(CELL_SIZE, 0, 0);
     }
     glPopMatrix();
+    
+    
 
 }
 
@@ -163,6 +166,7 @@ void Map::update_movement() {
             cells[i + x][j + z]->update_movement();
         }
     }
+   
 }
 
 /* The Player is special and the map will use the reference to the player to

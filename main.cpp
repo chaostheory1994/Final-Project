@@ -50,6 +50,7 @@ void my_mouse_passive(int x, int y);
 void my_mouse(int button, int state, int mousex, int mousey);
 void my_idle(void);
 void toggle_fullscreen();
+void enable_lights();
 #ifdef __linux__
 unsigned GetTickCount();
 #elif __APPLE__
@@ -137,16 +138,23 @@ void glut_setup(void) {
 
 /* This function sets up the initial states of OpenGL related enivornment */
 void gl_setup(void) {
-
+    GLfloat globalAmb[] = {0.1, 0.1, 0.1, 1.0};
     /* specifies a background color: black in this case */
     glClearColor(0, 0, 0, 0);
-
+    //glEnable(GL_LIGHTING);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_NORMALIZE);
+    //glEnable(GL_COLOR_MATERIAL);
+    
+    //enable_lights();
+    
     /* setup for simple 2d projection */
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     /* set the viewable portion  */
     gluPerspective(20, width / height, 1, 100.0);
     glMatrixMode(GL_MODELVIEW);
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmb);
     return;
 }
 
@@ -369,6 +377,8 @@ void my_mouse(int button, int state, int mousex, int mousey) {
 
 void my_display(void) {
     int line_x = 0;
+    GLfloat light_position[] = {p->getX(), 1.0, p->getZ(), 1.0};
+    GLfloat light_direction[] = {p->getX(), 0.0, p->getZ()};
     /* clear the buffer */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     // Seeing if fps needs updated.
@@ -410,6 +420,11 @@ void my_display(void) {
             p->getX(), 0, p->getZ(),
             0, 0, -1);
     
+    glPushMatrix();
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, light_direction);
+    glPopMatrix();
+    
     // To make the game look good on all resolutions, gonna scale everything to look nice.
     // Does not quite work yet
     //glScalef(DEFAULT_WINDOW_SIZE_X / width, 1, DEFAULT_WINDOW_SIZE_Y / height);
@@ -440,6 +455,23 @@ void my_idle(void) {
     // Display Screen
     my_display();
     return;
+}
+
+void enable_lights(){
+    GLfloat light_ambient[] = {0.2, 0.2, 0.2, 1.0};
+    GLfloat light_diffuse[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0};
+    
+    glEnable(GL_LIGHT0);
+    
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 45.0);
+    glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 2);
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 0.0);
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.0);
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.5);
 }
 
 /* This method does what it says, toggles fullscreen. */

@@ -9,6 +9,12 @@
 #define	FROZENORB_H
 #include "Spell.h"
 #include "Defines.h"
+#if defined(__APPLE__)
+#include <GLUT/glut.h>
+#include <stdlib.h>
+#else
+#include <GL/glut.h>
+#endif
 
 class FrozenOrb : public Spell{
 public:
@@ -21,6 +27,7 @@ public:
     virtual ~FrozenOrb();
 private:
     float direction;
+    GLUquadricObj* shape;
 };
 
 #endif	/* FROZENORB_H */

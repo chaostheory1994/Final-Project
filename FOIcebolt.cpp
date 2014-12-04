@@ -18,6 +18,8 @@
 #endif
 #define FOI_DIST 10.0
 #define FOI_SPEED 0.5;
+#define FOI_CIRCLE_SHARPNESS 32
+#define FOI_CIRCLE_RADIUS 0.25
 
 FOIcebolt::FOIcebolt() {
 }
@@ -74,13 +76,51 @@ void FOIcebolt::update(){
 }
 
 void FOIcebolt::draw(){
+    float prev[2];
+    float curr[2];
+    float theta = 0;
+    float dtheta = (2*M_PI )/ FOI_CIRCLE_SHARPNESS;
+    int i = 0;
+    
     glRotatef(direction + 90, 0.0, 1.0, 0.0);
     glColor3f(0.0, 0.0, 1.0);
+    glTranslatef(0, 2, 0);
+    
+    // We will be drawing a circle at one end
+    // While also tying all the vertexes of the circle to a point. on the other end.
+    curr[0] = cos(theta) * FOI_CIRCLE_RADIUS;
+    curr[1] = sin(theta) * FOI_CIRCLE_RADIUS;
+    
+    for(i = 0; i < FOI_CIRCLE_SHARPNESS; i++){
+        prev[0] = curr[0];
+        prev[1] = curr[1];
+        theta += dtheta;
+        curr[0] = cos(theta) * FOI_CIRCLE_RADIUS;
+        curr[1] = sin(theta) * FOI_CIRCLE_RADIUS;
+        glBegin(GL_POLYGON);
+        glVertex3f(0.0, 0.0, 0.5);
+        glVertex3f(curr[0], curr[1], -0.5);
+        glVertex3f(prev[0], prev[1], -0.5);
+        glEnd();
+    }
+    
+    theta = 0;
+    
     glBegin(GL_POLYGON);
+    //glNormal(0.0, 0.0, 1.0);
+    for(i = 0; i < FOI_CIRCLE_SHARPNESS; i++){
+        glVertex3f(cos(theta) * FOI_CIRCLE_RADIUS,
+                sin(theta) * FOI_CIRCLE_RADIUS,
+                -0.5);
+        theta += dtheta;
+    }
+    glEnd();
+    
+    /*glBegin(GL_POLYGON);
     glVertex3f(0.0, 0.0, 0.5);
     glVertex3f(0.25, 0.0, -0.5);
     glVertex3f(-0.25, 0.0, -0.5);
-    glEnd();
+    glEnd();*/
 }
 
 Spell* FOIcebolt::cast(Spell_Details* sd, unsigned long long t){
