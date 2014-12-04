@@ -5,6 +5,7 @@
  * Created on November 10, 2014, 11:54 AM
  */
 
+#define _USE_MATH_DEFINES
 #include "FOIcebolt.h"
 #include "Defines.h"
 #include "Spell.h"

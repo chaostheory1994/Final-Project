@@ -6,6 +6,7 @@
  * Created on November 10, 2014, 10:40 AM
  */
 
+#define _USE_MATH_DEFINES
 #include "FrozenOrb.h"
 #include "Spell.h"
 #include "Defines.h"

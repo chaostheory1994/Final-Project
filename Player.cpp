@@ -5,6 +5,7 @@
  * Created on October 20, 2014, 1:36 PM
  */
 
+#define _USE_MATH_DEFINES
 #if defined(__APPLE__)
 #include <GLUT/glut.h>
 #include <stdlib.h>

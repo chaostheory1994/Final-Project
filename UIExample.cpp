@@ -5,6 +5,7 @@
  * Created on November 13, 2014, 1:35 PM
  */
 
+#define _CRT_SECURE_NO_WARNINGS
 #include "UIExample.h"
 #include "Map.h"
 #include "Defines.h"

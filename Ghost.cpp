@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Kyle . All rights reserved.
 //
 
+#define _USE_MATH_DEFINES
 #if defined(__APPLE__)
 #include <GLUT/glut.h>
 #include <stdlib.h>
