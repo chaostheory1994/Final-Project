@@ -10,7 +10,21 @@
 
 #define DEBUG_MESSAGES
 #define CELL_SIZE 100 /* meters / pixels. May Still need adjustment.*/
-#define PLAYER_DEFAULT_SPEED 1 /* m/s */
+#define PLAYER_DEFAULT_SPEED 3 /* m/s */
+#define NUM_SIDES_SPHERE 30
+
+/* GHOST DEFINES */
+#define GHOST_DEFAULT_SPEED .1 /* m/s */
+#define GHOST_CHASE_SPEED .7
+#define GHOST_PACE_LENGTH 8
+#define FIRING_RATE 250 /* MILLISECONDS */
+#define CHANGE_DIRECTION_RATE 1000 /* MILLISECONDS */
+#define GHOST_ATTRACTION_RADIUS 12
+
+/* LAZER DEFINES */
+#define L_SPEED 2
+#define L_DIST 30
+
 
 #define CAMERA_HEIGHT 50
 #define JAVA_IS_BUTT
@@ -74,6 +88,15 @@ struct Collision_Det{
 // Global Cooldown
 #define GLOBAL_COOLDOWN 1.5
 #define IGNORE_COOLDOWN 0
+
+
+/* Texture Stuff */
+#define NUM_TEXTURES 1
+#define ILLUMINATI_FACE_TEX   0
+
+/* bmp file widths */
+#define smallWidth      256
+
 
 #endif	/* DEFINES_H */
 

@@ -109,6 +109,7 @@ void Player::update_pos(){
     if(fabs(distX) <= fabs(dx)){
         x += distX;
         distX = 0;
+        dx = 0;
     }
     else{
         distX -= dx;
@@ -117,6 +118,7 @@ void Player::update_pos(){
     if(fabs(distZ) <= fabs(dz)){
         z += distZ;
         distZ = 0;
+        dz = 0;
     }
     else{
         distZ -= dz;

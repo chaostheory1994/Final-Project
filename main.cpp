@@ -33,7 +33,7 @@
 #define my_assert(X,Y) ((X)?(void) 0:(printf("error:%s in %s at %d", Y, __FILE__, __LINE__), myabort()))
 #define DELTA_TIME 10  /* defined to be 10 msec */
 #define MAX_FRAME_SKIP 5 /* Max number of frames that the program can skip to update game mechanics */
-#define CAMERA_ANGLE 50
+#define CAMERA_ANGLE 20
 
 #define DEFAULT_WINDOW_SIZE_X 800.0
 #define DEFAULT_WINDOW_SIZE_Y 600.0
@@ -82,7 +82,7 @@ int cameraY;
 int camera_distance;
 
 //TEST GHOST
-Ghost* firstGhost;
+Ghost* demoGhost;
 
 void myabort(void) {
     abort();
@@ -90,6 +90,11 @@ void myabort(void) {
 }
 
 int main(int argc, char **argv) {
+    
+    #ifdef DEBUG_MESSAGES
+    printf("Program Start");
+    #endif
+    
     /* General initialization for GLUT and OpenGL
     Must be called first */
     glutInit(&argc, argv);
@@ -159,6 +164,7 @@ void gl_setup(void) {
 }
 
 void my_setup(int argc, char **argv) {
+    
     float rad;
     next_game_tick = GetTickCount();
     next_fps_update = GetTickCount();
@@ -166,11 +172,13 @@ void my_setup(int argc, char **argv) {
     menu = NULL;
     p = new Player(0, 0);
     m = new Map(5, 5);
-    firstGhost = new Ghost(3,3);
+    
 
     m->set_player(p);
-    
-    m->add_entity(firstGhost);
+    demoGhost = new Ghost(10,10);
+    m->add_entity(demoGhost);
+    m->add_entity(new Ghost(25,25));
+    m->add_entity(new Ghost(50,50));
     
     hud = new HUD(m, p);
     // We are going to setup the camera location.
@@ -228,6 +236,9 @@ void my_keyboard(unsigned char key, int x, int y) {
             puts("2 Hit!");
             ref = new FrozenOrb();
             m->add_spell(ref, p, GetTickCount());
+            break;
+        case '5':
+            demoGhost->toggleGhostAttractionRadius();
             break;
 #endif
         default: break;

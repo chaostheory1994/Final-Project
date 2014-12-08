@@ -17,8 +17,7 @@
 #include <GL/glut.h>
 #endif
 #include "Map.h"
-#define L_SPEED 1
-#define L_DIST 30
+
 
 
 
