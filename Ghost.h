@@ -10,6 +10,7 @@
 #define	GHOST_H
 #include "Spell.h"
 #include "Entity.h"
+#include "Map.h"
 
 #define GHOST_MAX_SPELL_COUNT 1
 
@@ -22,12 +23,18 @@ public:
     void draw();
     void update_pos();
     void fire_Lazer();
+    void toggleGhostAttractionRadius();
     //void map_outbound(int);
 
     virtual ~Ghost();
 private:
-    unsigned long long tickCounter;
+    bool isPlayerNear();
     unsigned long long readyToFire;
+    Spell* lazer_ref;
+    Map* curr_map;
+    Entity* curr_player;
+    bool isChasing;
+    bool drawGhostAttractionRadius;
 };
 
 #endif	/* GHOST_H */
