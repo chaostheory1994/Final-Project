@@ -41,6 +41,7 @@ public:
     float getZ();
     float getSpeedX();
     float getSpeedZ();
+    bool isMoving();
 protected:
     float health;
     float resource;

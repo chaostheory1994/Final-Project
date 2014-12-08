@@ -55,6 +55,7 @@ float Entity::getX(){ return x;}
 float Entity::getZ(){ return z;}
 float Entity::getSpeedX(){ return dx; }
 float Entity::getSpeedZ(){ return dz; }
+bool Entity::isMoving(){return (dx != 0 || dz !=0 );}
 void Entity::draw(){ return; };
 void Entity::update(){ return; }
 void Entity::dispatch_collision(Entity*){ return; }
