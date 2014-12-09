@@ -37,10 +37,13 @@ public:
      * It is here mainly for spells. When a spell is cast, an entity should stop to cast it. */
     virtual void cancel_movement();
     Collision_Det* get_collision_details();
+	float getHealth();
+	float getResource();
     float getX();
     float getZ();
     float getSpeedX();
     float getSpeedZ();
+	void useResource(float cost);
     bool isMoving();
 protected:
     float health;

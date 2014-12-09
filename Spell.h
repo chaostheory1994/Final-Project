@@ -46,7 +46,9 @@ public:
     float getSpeedX();
     float getSpeedY();
     float getSpeedZ();
+	float getCost();
     bool isComplete();
+	void drawOnActionBar(int position);
 protected:
     int id;
     bool isRef;
@@ -56,6 +58,7 @@ protected:
     float distX, distY, distZ;
     float dx, dy, dz;
     float x, y, z;
+	float cost;
     bool isCompleted;
     /* Internal Collision Struct */
     /* To know how to define this look in Defines.h

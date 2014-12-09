@@ -23,6 +23,9 @@
  * Will take the x,z coordinate in the world
  */
 Player::Player(float beginX, float beginZ) {
+	health = 100.0f;
+	resource = 100.0f;
+
     // First we set which cell the player will be in.
     x = beginX;
     z = beginZ;
@@ -100,7 +103,7 @@ void Player::draw(){
 
 /* A method to update the player per SKIP_TICKS */
 void Player::update(){
-    
+	useResource(-RESOURCE_REGEN);
 }
 
 /* A method to update the player's position per SKIP_TICKS */

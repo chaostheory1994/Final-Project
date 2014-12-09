@@ -25,14 +25,14 @@ LittleGrass::~LittleGrass() {
 }
 
 void LittleGrass::draw(){
-    glScalef(0.5, 0.5, 0.5);
-    
-    glColor3f( 0.0, 0.75, 0.0);
-    
-    glBegin(GL_POLYGON);
-    glVertex3f(0.0, 0.5, 0.0);
-    glVertex3f(0.25, 0.0, 0.0);
-    glVertex3f(-0.25, 0.0, 0.0);
-    glEnd();
+	glScalef(0.75, 0.75, 0.75);
+
+	glColor3f(0.0, 0.75, 0.0);
+
+	glBegin(GL_POLYGON);
+	glVertex3f(0.0, 0.5, -0.5);
+	glVertex3f(0.25, 0.0, 0.0);
+	glVertex3f(-0.25, 0.0, 0.0);
+	glEnd();
 }
 

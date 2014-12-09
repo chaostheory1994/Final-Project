@@ -8,9 +8,9 @@
 #ifndef DEFINES_H
 #define	DEFINES_H
 
-#define DEBUG_MESSAGES
+//#define DEBUG_MESSAGES
 #define CELL_SIZE 100 /* meters / pixels. May Still need adjustment.*/
-#define PLAYER_DEFAULT_SPEED 3 /* m/s */
+#define PLAYER_DEFAULT_SPEED 1 /* m/s */
 #define NUM_SIDES_SPHERE 30
 
 /* GHOST DEFINES */
@@ -34,6 +34,10 @@
 
 const int SKIP_TICKS = 1000 / GAME_UPDATE_SPEED;
 const int FPS_SKIP_TICKS = 1000;
+
+const float MAX_HEALTH = 100.0f;
+const float MAX_RESOURCE = 100.0f;
+const float RESOURCE_REGEN = 0.1f;
 
 float get_fps();
 

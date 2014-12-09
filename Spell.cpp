@@ -26,6 +26,7 @@ float Spell::getZ(){ return z; }
 float Spell::getSpeedX(){ return dx; }
 float Spell::getSpeedY(){ return dy; }
 float Spell::getSpeedZ(){ return dz; }
+float Spell::getCost(){ return cost; }
 bool Spell::isComplete(){ return isCompleted; }
 Spell* Spell::cast(Spell_Details* sd, unsigned long long t){ return NULL; }
 void Spell::update(){ return; }

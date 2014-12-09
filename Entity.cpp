@@ -50,7 +50,14 @@ void Entity::cancel_movement(){
     distZ = 0;
 }
 
+void Entity::useResource(float cost){
+	resource -= cost;
+	if (resource > MAX_RESOURCE) resource = MAX_RESOURCE;
+}
+
 void Entity:: update_pos(){ return; }
+float Entity::getHealth(){ return health; }
+float Entity::getResource(){ return resource; }
 float Entity::getX(){ return x;}
 float Entity::getZ(){ return z;}
 float Entity::getSpeedX(){ return dx; }

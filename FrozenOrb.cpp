@@ -30,6 +30,7 @@ FrozenOrb::FrozenOrb() {
     isCompleted = false;
     //name = "Frozen Orb";
     id = 0;
+	cost = 10.0f;
 }
 
 FrozenOrb::FrozenOrb(const FrozenOrb& orig) {
@@ -40,6 +41,7 @@ FrozenOrb::~FrozenOrb() {
 
 /* Setting up a new frozen orb to cast */
 Spell* FrozenOrb::cast(Spell_Details* sd, unsigned long long t){
+	if (sd->player->getResource() < cost) return NULL;
     // Create new generic reference version.
     FrozenOrb* ret = new FrozenOrb;
     float temp;
@@ -144,3 +146,7 @@ void FrozenOrb::update(){
     map->add_spell(ref, NULL, IGNORE_COOLDOWN);
     delete ref;
 }
+
+/*void FrozenOrb::drawOnActionBar(int position) {
+
+}*/

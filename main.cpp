@@ -224,6 +224,11 @@ void my_keyboard(unsigned char key, int x, int y) {
                 menu = NULL;
             }
             break;
+		case '2':
+			puts("2 Hit!");
+			ref = new FrozenOrb();
+			if (!m->add_spell(ref, p, GetTickCount())) p->useResource(ref->getCost());
+			break;
         case 'q':
         case 'Q':
             exit(0);
@@ -231,11 +236,6 @@ void my_keyboard(unsigned char key, int x, int y) {
 #ifdef DEBUG_MESSAGES
         case '1':
             printf("Player Coord: %f, %f\n", p->getX(), p->getZ());
-            break;
-        case '2':
-            puts("2 Hit!");
-            ref = new FrozenOrb();
-            m->add_spell(ref, p, GetTickCount());
             break;
         case '5':
             demoGhost->toggleGhostAttractionRadius();

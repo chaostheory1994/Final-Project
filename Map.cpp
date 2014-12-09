@@ -5,11 +5,14 @@
  * Created on October 20, 2014, 11:26 PM
  */
 
+#define _CRT_SECURE_NO_WARNINGS
 #include "Map.h"
 #include "Cell.h"
 #include "Entity.h"
 #include "Defines.h"
 #include "LittleGrass.h"
+#include "Boulder.h"
+#include "Tree.h"
 #include <queue>
 #include <cstdlib>
 
@@ -240,6 +243,8 @@ int Map::add_spell(Spell* sp, Entity* caster, unsigned long long t) {
     
     // Now that the spell_details is all setup, lets cast.
     casted = sp->cast(sd, t);
+	delete sd;
+	if (casted == NULL) return -1;
     
     // Now we have to register the new cast with the cell.
     cells[(int)(casted->getX() / CELL_SIZE)][(int)(casted->getZ() / CELL_SIZE)]->add_spell(casted);
@@ -251,6 +256,8 @@ int Map::add_spell(Spell* sp, Entity* caster, unsigned long long t) {
 int Map::add_spell(Spell* sp, Entity* caster, float* dir, unsigned long long t) {
     Spell_Details* sd;
     Spell* casted;
+
+	if (sp == NULL) return -1;
     
     // First we check is the spell on cooldown?
     // if (t != 0 && !sp->isCD(t)) return -1; broken for now.
@@ -301,7 +308,26 @@ void Map::add_scenery(Drawable* obj){
 
 /* This will essentially be a list of scenery initializions and adding them to the world. */
 void Map::populate_world(){
-    add_scenery(new LittleGrass(5, 5));
+	for (int i = 0; i<500; i++){
+		for (int j = 0; j<500; j++){
+			if (i>10 && j>10 && i % 25 == 21 && j % 25 == 15){
+				if (j % 2 == 0 && i % 2 == 0){
+					add_scenery(new Tree(i, j));
+					add_scenery(new LittleGrass(i - 3, j - 3));
+					add_scenery(new LittleGrass(i - 1, j - 4));
+					add_scenery(new LittleGrass(i + 2, j - 2));
+					add_scenery(new LittleGrass(i - 2, j + 1));
+					add_scenery(new LittleGrass(i + 3, j + 1));
+					add_scenery(new LittleGrass(i + 1, j + 4));
+					add_scenery(new LittleGrass(i - 4, j + 3));
+					add_scenery(new LittleGrass(i + 3, j - 3));
+				}
+				else{
+					add_scenery(new Boulder(i, j));
+				}
+			}
+		}
+	}
 }
 
 
@@ -358,7 +384,7 @@ void Map::init_textures() {
     // set pixel storage mode
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     
-    load_bmp("/Users/kyle/Final-Project/illum24_v2.bmp", illum24_v2_img,  smallWidth, &tex_names[ILLUMINATI_FACE_TEX]) ;
+    load_bmp("illum24_v2.bmp", illum24_v2_img,  smallWidth, &tex_names[ILLUMINATI_FACE_TEX]) ;
 }
 
 GLuint Map::get_texture(int index) {
